@@ -16,6 +16,7 @@ ALL_PATCHES = [
     "zoom-blur",
     "swirl",
     "displace",
+    "drip",
 ]
 
 

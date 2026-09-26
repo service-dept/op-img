@@ -355,3 +355,15 @@ python3 ./displace/displace.py <input> [output] [--amount PX] [--angle DEG] [--b
 Default: `--amount 60 --angle 0 --blur 3`
 
 ![displace example](_output/mclaren-displace.jpg)
+
+### drip
+
+Bleed bright pixels in one direction with a fading tail, like wet paint running.
+
+```bash
+python3 ./drip/drip.py <input> [output] [--length PX] [--threshold N] [--direction down|up|left|right]
+```
+
+Default: `--length 120 --threshold 180 --direction down`
+
+![drip example](_output/mclaren-drip.jpg)
