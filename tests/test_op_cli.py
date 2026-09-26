@@ -32,6 +32,7 @@ ALL_PATCHES = [
     "dither",
     "jpeg-rot",
     "ascii",
+    "recolor",
 ]
 
 
