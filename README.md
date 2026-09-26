@@ -415,3 +415,15 @@ python3 ./bloom/bloom.py <input> [output] [--amount N] [--threshold N] [--radius
 Default: `--amount 1 --threshold 170 --radius 8`
 
 ![bloom example](_output/mclaren-bloom.jpg)
+
+### voronoi-mosaic
+
+Split the image into irregular Voronoi cells filled with their average colour, with optional dark leading like stained glass.
+
+```bash
+python3 ./voronoi-mosaic/voronoi-mosaic.py <input> [output] [--size PX] [--jitter N] [--edges PX] [--seed N]
+```
+
+Default: `--size 24 --jitter 1 --edges 0`
+
+![voronoi-mosaic example](_output/mclaren-voronoi.jpg)
