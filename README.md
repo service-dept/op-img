@@ -46,7 +46,9 @@ Reduce color depth by posterizing to N bits per channel.
 
 Default: `--bits 3` (8 color levels — 512 total colors)
 
-![bit-crush example](_output/mclaren-crush-3bit.jpg)
+Example: `--bits 1`
+
+![bit-crush example](_output/mclaren-crush-1bit.jpg)
 
 ### res-crush
 
@@ -69,6 +71,8 @@ Shift R, G, B channels by independent pixel amounts for a misregistered print / 
 ```
 
 Default: `--r 30,15 --b -25,-10`
+
+Example: `--r 140,50 --g -20,40 --b -120,-40`
 
 ![channel-offset example](_output/mclaren-offset.jpg)
 
@@ -103,18 +107,6 @@ python3 ./scan-glitch/scan-glitch.py <input> [output] [--severity N] [--seed N]
 ```
 
 ![scan-glitch example](_output/mclaren-glitch.jpg)
-
-### channel-swap
-
-Rearrange RGB channels — swap, duplicate, or reorder color channels.
-
-```bash
-python3 ./channel-swap/channel-swap.py <input> [output] [--map B,G,R]
-```
-
-Default: `--map B,G,R` (swaps red and blue)
-
-![channel-swap example](_output/mclaren-chswap.jpg)
 
 ### echo
 
@@ -274,6 +266,8 @@ python3 ./drip/drip.py <input> [output] [--length PX] [--threshold N] [--directi
 
 Default: `--length 120 --threshold 180 --direction down`
 
+Example: `--length 500 --threshold 120`
+
 ![drip example](_output/mclaren-drip.jpg)
 
 ### edge-glow
@@ -384,6 +378,8 @@ python3 ./jpeg-rot/jpeg-rot.py <input> [output] [--quality N] [--generations N]
 
 Default: `--quality 10 --generations 30`
 
+Example: `--quality 5 --generations 80`
+
 ![jpeg-rot example](_output/mclaren-jpegrot.jpg)
 
 ### ascii
@@ -464,6 +460,18 @@ python3 ./hue-isolate/hue-isolate.py <input> [output] [--hue DEG] [--width DEG] 
 Default: `--hue 25 --width 20 --amount 1` (orange)
 
 ![hue-isolate example](_output/mclaren-hueiso.jpg)
+
+### channel-swap
+
+Rearrange RGB channels — swap, duplicate, or reorder color channels.
+
+```bash
+python3 ./channel-swap/channel-swap.py <input> [output] [--map B,G,R]
+```
+
+Default: `--map B,G,R` (swaps red and blue)
+
+![channel-swap example](_output/mclaren-chswap.jpg)
 
 ### dot-halftone
 
