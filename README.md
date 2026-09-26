@@ -502,7 +502,7 @@ Default: `--quality 10 --generations 30`
 
 ### ascii
 
-Replace each cell with a character chosen by brightness, drawn in the cell's hue on black.
+Replace each cell with a bold character chosen by brightness, stretched to the image's own range, drawn in the cell's hue on black.
 
 ```bash
 python3 ./ascii/ascii.py <input> [output] [--cell PX] [--charset CHARS]

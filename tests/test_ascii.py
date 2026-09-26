@@ -62,3 +62,12 @@ class TestAscii:
     def test_no_args(self, run_tool):
         r = run_tool("ascii", "ascii.py", [])
         assert r.returncode != 0
+
+    def test_output_is_not_near_black(self, run_tool, tmp_workdir):
+        """Bold glyphs and a stretched range keep the output readable on black."""
+        tmp_path, img = tmp_workdir
+        out = str(tmp_path / "out.png")
+        r = run_tool("ascii", "ascii.py", [img, out, "--cell", "8"])
+        assert r.returncode == 0
+        mean = np.asarray(Image.open(out).convert("RGB"), dtype=np.float64).mean()
+        assert mean > 30, f"Output too dark: mean {mean:.1f}"

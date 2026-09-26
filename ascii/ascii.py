@@ -15,7 +15,7 @@ def glyph_masks(charset: str, cell: int) -> np.ndarray:
     masks = []
     for ch in charset:
         tile = Image.new("L", (cell, cell), 0)
-        ImageDraw.Draw(tile).text((cell / 2, cell / 2), ch, fill=255, font=font, anchor="mm")
+        ImageDraw.Draw(tile).text((cell / 2, cell / 2), ch, fill=255, font=font, anchor="mm", stroke_width=1, stroke_fill=255)
         masks.append(np.array(tile, dtype=np.float64) / 255.0)
     return np.stack(masks)
 
@@ -45,7 +45,13 @@ def main() -> None:
 
     small = np.array(img.resize((cols, rows), Image.BOX), dtype=np.float64)
     lum = small @ np.array([0.299, 0.587, 0.114])
-    idx = np.clip((lum / 256.0 * len(args.charset)).astype(int), 0, len(args.charset) - 1)
+    # Stretch brightness to this image's own range so mid-tones reach the dense glyphs.
+    # A flat image has no range to stretch, so keep absolute brightness (white stays a glyph).
+    lo, hi = np.percentile(lum, 2), np.percentile(lum, 98)
+    if hi - lo < 1.0:
+        lo, hi = 0.0, 256.0
+    norm = np.clip((lum - lo) / max(hi - lo, 1.0), 0.0, 1.0)
+    idx = np.clip((norm * len(args.charset)).astype(int), 0, len(args.charset) - 1)
 
     masks = glyph_masks(args.charset, args.cell)
     coverage = masks[idx].transpose(0, 2, 1, 3).reshape(rows * args.cell, cols * args.cell)
