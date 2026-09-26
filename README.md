@@ -487,3 +487,15 @@ python3 ./dither/dither.py <input> [output] [--method bayer|floyd|atkinson] [--l
 Default: `--method bayer --levels 2 --matrix 8`
 
 ![dither example](_output/mclaren-dither.jpg)
+
+### jpeg-rot
+
+Re-save as a low-quality JPEG many times, shifting a pixel each time so the damage piles up instead of settling.
+
+```bash
+python3 ./jpeg-rot/jpeg-rot.py <input> [output] [--quality N] [--generations N]
+```
+
+Default: `--quality 10 --generations 30`
+
+![jpeg-rot example](_output/mclaren-jpegrot.jpg)

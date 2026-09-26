@@ -27,6 +27,7 @@ ALL_PATCHES = [
     "flow-streak",
     "crt",
     "dither",
+    "jpeg-rot",
 ]
 
 
