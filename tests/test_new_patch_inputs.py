@@ -23,6 +23,10 @@ NEW_PATCHES = [
     ("oil-paint", "oilpaint"),
     ("tilt-shift", "tiltshift"),
     ("flow-streak", "flow"),
+    ("crt", "crt"),
+    ("dither", "dither"),
+    ("jpeg-rot", "jpegrot"),
+    ("ascii", "ascii"),
 ]
 NAMES = [name for name, _ in NEW_PATCHES]
 
