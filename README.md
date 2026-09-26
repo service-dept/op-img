@@ -367,3 +367,15 @@ python3 ./drip/drip.py <input> [output] [--length PX] [--threshold N] [--directi
 Default: `--length 120 --threshold 180 --direction down`
 
 ![drip example](_output/mclaren-drip.jpg)
+
+### edge-glow
+
+Turn edges into neon lines in each pixel's own hue, with a soft halo, over a darkened base.
+
+```bash
+python3 ./edge-glow/edge-glow.py <input> [output] [--amount N] [--radius N]
+```
+
+Default: `--amount 1 --radius 6`
+
+![edge-glow example](_output/mclaren-edgeglow.jpg)

@@ -17,6 +17,7 @@ ALL_PATCHES = [
     "swirl",
     "displace",
     "drip",
+    "edge-glow",
 ]
 
 
