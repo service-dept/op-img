@@ -331,3 +331,15 @@ python3 ./zoom-blur/zoom-blur.py <input> [output] [--amount N] [--center X,Y] [-
 Default: `--amount 0.3 --center 0.5,0.5 --samples 32`
 
 ![zoom-blur example](_output/mclaren-zoomblur.jpg)
+
+### swirl
+
+Twist the image around a centre, with the rotation fading out toward a radius.
+
+```bash
+python3 ./swirl/swirl.py <input> [output] [--angle DEG] [--radius N] [--center X,Y]
+```
+
+Default: `--angle 360 --radius 1.0 --center 0.5,0.5`
+
+![swirl example](_output/mclaren-swirl.jpg)

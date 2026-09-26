@@ -14,6 +14,7 @@ ALL_PATCHES = [
     "wrong-stride",
     "fft-phase",
     "zoom-blur",
+    "swirl",
 ]
 
 
