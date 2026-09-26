@@ -475,3 +475,15 @@ python3 ./crt/crt.py <input> [output] [--amount N] [--pitch PX] [--curve N]
 Default: `--amount 1 --pitch 3 --curve 0.12`
 
 ![crt example](_output/mclaren-crt.jpg)
+
+### dither
+
+Dither to N levels per channel with a Bayer matrix, or with Floyd–Steinberg or Atkinson error diffusion. Error diffusion takes a few seconds on the README image.
+
+```bash
+python3 ./dither/dither.py <input> [output] [--method bayer|floyd|atkinson] [--levels N] [--matrix 2|4|8]
+```
+
+Default: `--method bayer --levels 2 --matrix 8`
+
+![dither example](_output/mclaren-dither.jpg)

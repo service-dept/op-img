@@ -26,6 +26,7 @@ ALL_PATCHES = [
     "tilt-shift",
     "flow-streak",
     "crt",
+    "dither",
 ]
 
 
