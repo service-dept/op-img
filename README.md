@@ -391,3 +391,15 @@ python3 ./contour/contour.py <input> [output] [--levels N] [--blur N] [--width P
 Default: `--levels 16 --blur 2 --width 1 --color #ec4899 --amount 1`
 
 ![contour example](_output/mclaren-contour.jpg)
+
+### hue-isolate
+
+Keep one hue band in full colour and turn everything else grey.
+
+```bash
+python3 ./hue-isolate/hue-isolate.py <input> [output] [--hue DEG] [--width DEG] [--amount N]
+```
+
+Default: `--hue 25 --width 20 --amount 1` (orange)
+
+![hue-isolate example](_output/mclaren-hueiso.jpg)

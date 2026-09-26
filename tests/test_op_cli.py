@@ -19,6 +19,7 @@ ALL_PATCHES = [
     "drip",
     "edge-glow",
     "contour",
+    "hue-isolate",
 ]
 
 
