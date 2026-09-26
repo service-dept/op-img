@@ -51,6 +51,7 @@ if [[ $# -eq 0 || "$1" == "--help" || "$1" == "-h" ]]; then
   banner
   echo ""
   echo "Usage: op <patch> <input> [--args]"
+  echo "       op <patch> <input> [output] [--args] + <patch> [--args] ..."
   echo ""
   list_random_patches
   exit 0
@@ -79,19 +80,149 @@ if [[ "$1" == "--info" ]]; then
   fi
 fi
 
-patch="$1"
-shift
+# Prints the script that runs a patch, or nothing if the patch does not exist.
+patch_script() {
+  local name="$1"
+  if [[ -f "$SCRIPT_DIR/$name/$name.sh" ]]; then
+    echo "$SCRIPT_DIR/$name/$name.sh"
+  elif [[ -f "$SCRIPT_DIR/$name/$name.py" ]]; then
+    echo "$SCRIPT_DIR/$name/$name.py"
+  fi
+}
 
-script_sh="$SCRIPT_DIR/$patch/$patch.sh"
-script_py="$SCRIPT_DIR/$patch/$patch.py"
+run_script() {
+  local script="$1"
+  shift
+  if [[ "$script" == *.sh ]]; then
+    "$script" "$@"
+  else
+    python3 "$script" "$@"
+  fi
+}
 
-if [[ -f "$script_sh" ]]; then
-  exec "$script_sh" "$@"
-elif [[ -f "$script_py" ]]; then
-  exec python3 "$script_py" "$@"
-else
-  echo "Error: unknown patch '$patch'" >&2
+unknown_patch() {
+  echo "Error: unknown patch '$1'" >&2
   echo "" >&2
   list_patches >&2
   exit 1
+}
+
+# Stacking: op <patch> <input> [output] [options] + <patch> [options] + ...
+# Each step runs in a temporary directory on the previous step's result, with
+# the patch's own default name, so the suffixes accumulate as they would in a
+# manual chain. The last step writes to [output] when one is given; otherwise
+# the result lands beside the input.
+stack() {
+  local steps=() step="" arg
+  for arg in "$@"; do
+    if [[ "$arg" == "+" ]]; then
+      steps+=("$step")
+      step=""
+    else
+      step+="${step:+$'\x1f'}$arg"
+    fi
+  done
+  steps+=("$step")
+
+  local i n=${#steps[@]} parts name
+  for (( i = 0; i < n; i++ )); do
+    if [[ -z "${steps[i]}" ]]; then
+      echo "Error: empty step $((i + 1)) in stack; put a patch name after each '+'" >&2
+      exit 1
+    fi
+    IFS=$'\x1f' read -r -a parts <<< "${steps[i]}"
+    name="${parts[0]}"
+    [[ -n "$(patch_script "$name")" ]] || unknown_patch "$name"
+  done
+
+  IFS=$'\x1f' read -r -a parts <<< "${steps[0]}"
+  if [[ ${#parts[@]} -lt 2 ]]; then
+    echo "Usage: op <patch> <input> [output] [options] + <patch> [options] ..." >&2
+    exit 1
+  fi
+  local input="${parts[1]}" output="" first_opts=("${parts[@]:2}")
+  if [[ ${#first_opts[@]} -gt 0 && "${first_opts[0]}" != -* ]]; then
+    output="${first_opts[0]}"
+    first_opts=("${first_opts[@]:1}")
+  fi
+  if [[ ! -f "$input" ]]; then
+    echo "Error: file not found: $input" >&2
+    exit 1
+  fi
+
+  STACK_WORK="$(mktemp -d)"
+  trap 'rm -rf "$STACK_WORK"' EXIT
+  local work="$STACK_WORK"
+  local current="$work/$(basename "$input")"
+  cp "$input" "$current"
+
+  local opts made file log="$work/.step.log" status script
+  for (( i = 0; i < n; i++ )); do
+    IFS=$'\x1f' read -r -a parts <<< "${steps[i]}"
+    name="${parts[0]}"
+    if (( i == 0 )); then
+      opts=("${first_opts[@]}")
+    else
+      opts=("${parts[@]:1}")
+    fi
+    script="$(patch_script "$name")"
+    if (( i == n - 1 )) && [[ -n "$output" ]]; then
+      status=0
+      run_script "$script" "$current" "$output" "${opts[@]}" 2> "$log" || status=$?
+      if (( status != 0 )); then
+        echo "Error: step $((i + 1)) ($name) failed" >&2
+        cat "$log" >&2
+        exit "$status"
+      fi
+      echo "Stacked $n patches → $output" >&2
+      return 0
+    fi
+    status=0
+    run_script "$script" "$current" "${opts[@]}" 2> "$log" || status=$?
+    if (( status != 0 )); then
+      echo "Error: step $((i + 1)) ($name) failed" >&2
+      cat "$log" >&2
+      exit "$status"
+    fi
+    # The work directory holds only the current image; the step's output is the one new file.
+    made=""
+    shopt -s dotglob nullglob
+    for file in "$work"/*; do
+      [[ "$file" == "$current" || "$file" == "$log" ]] && continue
+      if [[ -n "$made" ]]; then
+        echo "Error: step $((i + 1)) ($name) wrote more than one file" >&2
+        exit 1
+      fi
+      made="$file"
+    done
+    if [[ -z "$made" ]]; then
+      echo "Error: step $((i + 1)) ($name) wrote no output" >&2
+      exit 1
+    fi
+    rm -f "$current"
+    current="$made"
+  done
+
+  local dest
+  dest="$(dirname "$input")/$(basename "$current")"
+  cp "$current" "$dest"
+  echo "Stacked $n patches → $dest" >&2
+}
+
+for arg in "$@"; do
+  if [[ "$arg" == "+" ]]; then
+    stack "$@"
+    exit 0
+  fi
+done
+
+patch="$1"
+shift
+
+script="$(patch_script "$patch")"
+[[ -n "$script" ]] || unknown_patch "$patch"
+if [[ "$script" == *.sh ]]; then
+  exec "$script" "$@"
+else
+  exec python3 "$script" "$@"
 fi
