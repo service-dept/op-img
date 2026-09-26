@@ -18,6 +18,10 @@ def main() -> None:
     parser.add_argument("--angle", type=float, default=90.0, help="Rotation offset in degrees (default: 90.0)")
     args = parser.parse_args()
 
+    if not os.path.isfile(args.input):
+        print(f"Error: file not found: {args.input}", file=sys.stderr)
+        sys.exit(1)
+
     img = Image.open(args.input).convert("RGB")
     arr = np.array(img, dtype=np.float64)
     h, w, _ = arr.shape

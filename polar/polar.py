@@ -22,6 +22,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if not os.path.isfile(args.input):
+        print(f"Error: file not found: {args.input}", file=sys.stderr)
+        sys.exit(1)
+
     img = Image.open(args.input).convert("RGB")
     arr = np.array(img, dtype=np.float64)
     h, w, _ = arr.shape

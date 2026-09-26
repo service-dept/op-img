@@ -2,7 +2,7 @@
 """cross-hatch -- Convert an image to a cross-hatching pattern.
 
 Multiple layers of lines at different angles, drawn in areas darker than
-per-layer brightness thresholds. Black on transparent.
+per-layer brightness thresholds. Pink on transparent.
 """
 
 import argparse
@@ -58,7 +58,7 @@ def draw_hatch_layer(draw, img, w, h, angle_deg, spacing, threshold):
 
             brightness = pixels[xi, yi]
             if brightness < threshold:
-                draw.line([(px, py), (nx, ny)], fill=(208, 101, 33, 255), width=1)
+                draw.line([(px, py), (nx, ny)], fill=(236, 72, 153, 255), width=1)
 
 
 def main():

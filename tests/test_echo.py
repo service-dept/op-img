@@ -32,6 +32,7 @@ class TestEcho:
     def test_missing_input(self, run_tool):
         r = run_tool("echo", "echo.py", ["/nonexistent/image.png"])
         assert r.returncode != 0
+        assert "not found" in r.stderr.lower()
 
     def test_no_args(self, run_tool):
         r = run_tool("echo", "echo.py", [])

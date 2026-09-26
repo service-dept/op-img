@@ -13,7 +13,7 @@ class TestResCrush:
         tmp_path, img = tmp_workdir
         r = run_tool("res-crush", "res-crush.sh", [img])
         assert r.returncode == 0
-        out = str(tmp_path / "input-pixelate-32.png")
+        out = str(tmp_path / "input-pixelate-64.png")
         assert_valid_image(out)
 
     def test_explicit_options(self, run_tool, tmp_workdir):
