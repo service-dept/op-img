@@ -12,6 +12,22 @@ ALL_PATCHES = [
     "posterize-hsv", "raw-bend", "res-crush", "scan-glitch", "seam-carve",
     "slit-scan", "stipple", "thermal", "tile-shuffle",
     "wrong-stride",
+    "fft-phase",
+    "zoom-blur",
+    "swirl",
+    "displace",
+    "drip",
+    "edge-glow",
+    "contour",
+    "hue-isolate",
+    "bloom",
+    "voronoi-mosaic",
+    "oil-paint",
+    "tilt-shift",
+    "flow-streak",
+    "dither",
+    "jpeg-rot",
+    "ascii",
 ]
 
 
