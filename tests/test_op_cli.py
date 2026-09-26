@@ -18,6 +18,7 @@ ALL_PATCHES = [
     "displace",
     "drip",
     "edge-glow",
+    "contour",
 ]
 
 

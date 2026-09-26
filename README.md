@@ -379,3 +379,15 @@ python3 ./edge-glow/edge-glow.py <input> [output] [--amount N] [--radius N]
 Default: `--amount 1 --radius 6`
 
 ![edge-glow example](_output/mclaren-edgeglow.jpg)
+
+### contour
+
+Draw lines where brightness crosses N levels, like a topographic map of the photo. Pink lines on black by default.
+
+```bash
+python3 ./contour/contour.py <input> [output] [--levels N] [--blur N] [--width PX] [--color HEX] [--amount N]
+```
+
+Default: `--levels 16 --blur 2 --width 1 --color #ec4899 --amount 1`
+
+![contour example](_output/mclaren-contour.jpg)
