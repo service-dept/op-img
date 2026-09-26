@@ -28,6 +28,7 @@ ALL_PATCHES = [
     "crt",
     "dither",
     "jpeg-rot",
+    "ascii",
 ]
 
 

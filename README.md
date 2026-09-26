@@ -499,3 +499,15 @@ python3 ./jpeg-rot/jpeg-rot.py <input> [output] [--quality N] [--generations N]
 Default: `--quality 10 --generations 30`
 
 ![jpeg-rot example](_output/mclaren-jpegrot.jpg)
+
+### ascii
+
+Replace each cell with a character chosen by brightness, drawn in the cell's hue on black.
+
+```bash
+python3 ./ascii/ascii.py <input> [output] [--cell PX] [--charset CHARS]
+```
+
+Default: `--cell 10 --charset " .:-=+*#%@"`
+
+![ascii example](_output/mclaren-ascii.jpg)
