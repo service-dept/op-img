@@ -11,32 +11,25 @@ from PIL import Image
 
 
 def tile_shuffle(image: Image.Image, grid: int, seed: Optional[int]) -> Image.Image:
-    """Divide image into grid x grid tiles and reassemble in shuffled order."""
+    """Divide image into grid x grid tiles and reassemble in shuffled order, keeping the image's size."""
     arr = np.array(image)
     h, w, c = arr.shape
-    tile_h = h // grid
-    tile_w = w // grid
+    # Spread the tile edges over the whole image, so tiles differ by at most a pixel when the grid
+    # does not divide it. A tile moved into a slot of a different size is resized to fit.
+    ys = np.linspace(0, h, grid + 1).round().astype(int)
+    xs = np.linspace(0, w, grid + 1).round().astype(int)
+    slots = [(ys[r], ys[r + 1], xs[col], xs[col + 1]) for r in range(grid) for col in range(grid)]
+    tiles = [arr[y0:y1, x0:x1] for y0, y1, x0, x1 in slots]
 
-    # Crop to exact tile grid dimensions
-    cropped = arr[:tile_h * grid, :tile_w * grid]
-
-    # Extract tiles
-    tiles = []
-    for row in range(grid):
-        for col in range(grid):
-            tile = cropped[row * tile_h:(row + 1) * tile_h, col * tile_w:(col + 1) * tile_w]
-            tiles.append(tile)
-
-    # Shuffle tiles
     rng = np.random.default_rng(seed)
     perm = rng.permutation(len(tiles))
 
-    # Reassemble
-    out = np.zeros_like(cropped)
-    for idx, src_idx in enumerate(perm):
-        row = idx // grid
-        col = idx % grid
-        out[row * tile_h:(row + 1) * tile_h, col * tile_w:(col + 1) * tile_w] = tiles[src_idx]
+    out = np.zeros_like(arr)
+    for (y0, y1, x0, x1), src_idx in zip(slots, perm):
+        tile = tiles[src_idx]
+        if tile.shape[:2] != (y1 - y0, x1 - x0):
+            tile = np.array(Image.fromarray(tile).resize((x1 - x0, y1 - y0), Image.NEAREST))
+        out[y0:y1, x0:x1] = tile
 
     return Image.fromarray(out)
 

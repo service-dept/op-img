@@ -47,6 +47,15 @@ class TestTileShuffle:
         assert_valid_image(out2)
         assert_valid_image(out8)
 
+    def test_keeps_size_when_grid_does_not_divide(self, run_tool, tmp_path):
+        arr = np.random.default_rng(0).integers(0, 255, (63, 65, 3), dtype=np.uint8)
+        img = str(tmp_path / "odd.png")
+        Image.fromarray(arr).save(img)
+        out = str(tmp_path / "out.png")
+        r = run_tool("tile-shuffle", "tile-shuffle.py", [img, out, "--grid", "8", "--seed", "1"])
+        assert r.returncode == 0, r.stderr
+        assert Image.open(out).size == (65, 63)
+
     def test_missing_input(self, run_tool):
         r = run_tool("tile-shuffle", "tile-shuffle.py", ["/nonexistent/image.png"])
         assert r.returncode != 0
