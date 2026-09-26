@@ -2,9 +2,13 @@
 
 ![The McLaren photo cycling through seam-carve, channel-swap, polar, pixel-sort, invert-lightness, wrong-stride and fold, each layered over the last](_output/op-img-hero.avif)
 
-Image processing tools for isolating, recoloring, and destroying images.
+op-img is a composable image manipulation CLI. Each patch does one thing to a photo: it sorts the pixels, wraps the frame into polar space, maps it to heat colours, rots it through JPEG. Every patch takes the same arguments, so any one can feed the next:
 
-Every script follows `<command> <input> [output] [options]`. If output is omitted, saves next to the input with a descriptive suffix.
+```bash
+op pixel-sort photo.jpg + fold + polar
+```
+
+Every patch follows `op <patch> <input> [output] [options]`. Leave out the output and the result is saved next to the input with a descriptive suffix.
 
 ## Quick start
 
@@ -43,6 +47,61 @@ op seam-carve photo.jpg out.jpg + thermal         # an output after the input na
 ```
 
 The input, and the output if you give one, come right after the first patch; every later step takes only options. Without an output, the result is saved next to the input with each patch's suffix in order, the same name a chain of single `op` calls would produce. Intermediate images live in a temporary directory that is removed afterwards. If a step fails, `op` names it, shows its error, and writes nothing.
+
+### What makes a good stack
+
+- **Order matters.** Each patch works on what the one before it made, so swapping two patches usually gives a different picture. `op invert-lightness photo.jpg + thermal` turns the car cold and the tyres white-hot; `op thermal photo.jpg + invert-lightness` turns it magenta and pink.
+- **Wrap a patch in polar.** `op polar photo.jpg + pixel-sort + polar --mode from-polar` sorts the unwrapped image, so the sort's rows come back as rings and rays around the pole. Give both polar steps the same `--center`, `--rotate` and `--radius`, and change those to move the vortex.
+- **Mix families.** A geometry patch followed by a colour patch, or a glitch followed by a blur, usually beats two patches from the same family, which tend to read as one.
+- **Push the options.** Defaults are tuned to look good on their own. Inside a stack a stronger setting often reads better, such as `drip --length 500 --threshold 120`.
+- **Draw last.** dot-halftone, line-halftone, cross-hatch and stipple write a transparent background, which turns black when a later patch reads it, so put them at the end.
+
+### Twenty stacks
+
+Twenty stacks on the same photo, in no particular order. Copy any command and swap in your own image.
+
+<table>
+<tr>
+<td width="50%"><img src="_output/stacks/stack-01.jpg" alt="op contour photo.jpg + swirl"><br><code>op contour photo.jpg + swirl</code></td>
+<td width="50%"><img src="_output/stacks/stack-02.jpg" alt="op fold photo.jpg + polar --center 0.3,0.5 --rotate 200 --radius 0.9 + pixel-sort + channel-swap"><br><code>op fold photo.jpg + polar --center 0.3,0.5 --rotate 200 --radius 0.9 + pixel-sort + channel-swap</code></td>
+</tr>
+<tr>
+<td width="50%"><img src="_output/stacks/stack-03.jpg" alt="op pixel-sort photo.jpg + fold + polar --center 0.5,0.85 --rotate 90 + swirl --angle 180"><br><code>op pixel-sort photo.jpg + fold + polar --center 0.5,0.85 --rotate 90 + swirl --angle 180</code></td>
+<td width="50%"><img src="_output/stacks/stack-04.jpg" alt="op thermal photo.jpg + invert-lightness"><br><code>op thermal photo.jpg + invert-lightness</code></td>
+</tr>
+<tr>
+<td width="50%"><img src="_output/stacks/stack-05.jpg" alt="op fft-phase photo.jpg + kaleidoscope --segments 10 --angle 0"><br><code>op fft-phase photo.jpg + kaleidoscope --segments 10 --angle 0</code></td>
+<td width="50%"><img src="_output/stacks/stack-06.jpg" alt="op invert-lightness photo.jpg + thermal"><br><code>op invert-lightness photo.jpg + thermal</code></td>
+</tr>
+<tr>
+<td width="50%"><img src="_output/stacks/stack-07.jpg" alt="op tile-shuffle photo.jpg --grid 8 + pixel-sort --by hue"><br><code>op tile-shuffle photo.jpg --grid 8 + pixel-sort --by hue</code></td>
+<td width="50%"><img src="_output/stacks/stack-08.jpg" alt="op slit-scan photo.jpg + thermal"><br><code>op slit-scan photo.jpg + thermal</code></td>
+</tr>
+<tr>
+<td width="50%"><img src="_output/stacks/stack-09.jpg" alt="op polar photo.jpg --center 0.62,0.4 --rotate 150 --radius 0.85 + drip --length 500 --threshold 120 + polar --mode from-polar --center 0.62,0.4 --rotate 150 --radius 0.85"><br><code>op polar photo.jpg --center 0.62,0.4 --rotate 150 --radius 0.85 + drip --length 500 --threshold 120 + polar --mode from-polar --center 0.62,0.4 --rotate 150 --radius 0.85</code></td>
+<td width="50%"><img src="_output/stacks/stack-10.jpg" alt="op polar photo.jpg + tile-shuffle --grid 8 + polar --mode from-polar"><br><code>op polar photo.jpg + tile-shuffle --grid 8 + polar --mode from-polar</code></td>
+</tr>
+<tr>
+<td width="50%"><img src="_output/stacks/stack-11.jpg" alt="op dither photo.jpg --method atkinson + zoom-blur"><br><code>op dither photo.jpg --method atkinson + zoom-blur</code></td>
+<td width="50%"><img src="_output/stacks/stack-12.jpg" alt="op polar photo.jpg + pixel-sort + polar --mode from-polar + channel-swap --map G,R,B"><br><code>op polar photo.jpg + pixel-sort + polar --mode from-polar + channel-swap --map G,R,B</code></td>
+</tr>
+<tr>
+<td width="50%"><img src="_output/stacks/stack-13.jpg" alt="op kaleidoscope photo.jpg + ascii"><br><code>op kaleidoscope photo.jpg + ascii</code></td>
+<td width="50%"><img src="_output/stacks/stack-14.jpg" alt="op scan-glitch photo.jpg + polar --center 0.72,0.3 --rotate 105 --radius 0.7"><br><code>op scan-glitch photo.jpg + polar --center 0.72,0.3 --rotate 105 --radius 0.7</code></td>
+</tr>
+<tr>
+<td width="50%"><img src="_output/stacks/stack-15.jpg" alt="op swirl photo.jpg + kaleidoscope"><br><code>op swirl photo.jpg + kaleidoscope</code></td>
+<td width="50%"><img src="_output/stacks/stack-16.jpg" alt="op res-crush photo.jpg --size 32 + zoom-blur"><br><code>op res-crush photo.jpg --size 32 + zoom-blur</code></td>
+</tr>
+<tr>
+<td width="50%"><img src="_output/stacks/stack-17.jpg" alt="op bit-crush photo.jpg --bits 1 + flow-streak"><br><code>op bit-crush photo.jpg --bits 1 + flow-streak</code></td>
+<td width="50%"><img src="_output/stacks/stack-18.jpg" alt="op channel-offset photo.jpg --r 140,50 --g -20,40 --b -120,-40 + swirl"><br><code>op channel-offset photo.jpg --r 140,50 --g -20,40 --b -120,-40 + swirl</code></td>
+</tr>
+<tr>
+<td width="50%"><img src="_output/stacks/stack-19.jpg" alt="op contour photo.jpg --levels 24 + zoom-blur --amount 0.5 + bloom"><br><code>op contour photo.jpg --levels 24 + zoom-blur --amount 0.5 + bloom</code></td>
+<td width="50%"><img src="_output/stacks/stack-20.jpg" alt="op pixel-sort photo.jpg --direction column + drip --length 500 --threshold 120 --direction up + invert-lightness"><br><code>op pixel-sort photo.jpg --direction column + drip --length 500 --threshold 120 --direction up + invert-lightness</code></td>
+</tr>
+</table>
 
 ## Requirements
 
