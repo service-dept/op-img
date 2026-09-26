@@ -22,6 +22,7 @@ ALL_PATCHES = [
     "hue-isolate",
     "bloom",
     "voronoi-mosaic",
+    "oil-paint",
 ]
 
 

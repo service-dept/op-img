@@ -427,3 +427,15 @@ python3 ./voronoi-mosaic/voronoi-mosaic.py <input> [output] [--size PX] [--jitte
 Default: `--size 24 --jitter 1 --edges 0`
 
 ![voronoi-mosaic example](_output/mclaren-voronoi.jpg)
+
+### oil-paint
+
+Kuwahara filter: smooth into flat painterly patches while keeping edges crisp.
+
+```bash
+python3 ./oil-paint/oil-paint.py <input> [output] [--radius N]
+```
+
+Default: `--radius 6`
+
+![oil-paint example](_output/mclaren-oilpaint.jpg)
