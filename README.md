@@ -153,13 +153,13 @@ Default: `--segments 6 --angle 90`
 
 ### polar
 
-Remap image between Cartesian and polar coordinates.
+Remap image between Cartesian and polar coordinates. `--center` moves the pole, `--rotate` turns where the seam falls, and `--radius` sets how far out the rings reach. Use the same values for `to-polar` and `from-polar` to map back.
 
 ```bash
-python3 ./polar/polar.py <input> [output] [--mode to-polar|from-polar]
+python3 ./polar/polar.py <input> [output] [--mode to-polar|from-polar] [--center X,Y] [--rotate DEG] [--radius N]
 ```
 
-Default: `--mode to-polar`
+Default: `--mode to-polar --center 0.5,0.5 --rotate 0 --radius 1`
 
 ![polar example](_output/mclaren-polar.jpg)
 
