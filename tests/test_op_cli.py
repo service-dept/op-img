@@ -23,6 +23,7 @@ ALL_PATCHES = [
     "bloom",
     "voronoi-mosaic",
     "oil-paint",
+    "tilt-shift",
 ]
 
 

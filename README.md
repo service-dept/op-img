@@ -439,3 +439,15 @@ python3 ./oil-paint/oil-paint.py <input> [output] [--radius N]
 Default: `--radius 6`
 
 ![oil-paint example](_output/mclaren-oilpaint.jpg)
+
+### tilt-shift
+
+Blur away from a horizontal focus band and lift the colour, so the scene looks like a miniature.
+
+```bash
+python3 ./tilt-shift/tilt-shift.py <input> [output] [--blur N] [--focus N] [--band N]
+```
+
+Default: `--blur 10 --focus 0.62 --band 0.25`
+
+![tilt-shift example](_output/mclaren-tiltshift.jpg)
