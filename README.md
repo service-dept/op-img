@@ -21,11 +21,28 @@ op <patch> <input> [--args]
 ```
 
 ```bash
-op bit-crush photo.jpg                      # default 2-bit crush
+op bit-crush photo.jpg                      # default 3-bit crush
 op dot-halftone photo.jpg out.png --spacing 8
 op closest-palette photo.jpg --palette "#000,#fff,#f00"
 op                                           # list all tools
+op pixel-sort photo.jpg + fold + polar         # stack patches with +
 ```
+
+## Stacking patches
+
+Join patches with `+` to run them one after another, each on the previous result:
+
+```bash
+op <patch> <input> [output] [--args] + <patch> [--args] + ...
+```
+
+```bash
+op pixel-sort photo.jpg + fold + polar            # writes photo-psort-fold-polar.png
+op pixel-sort photo.jpg --by hue + channel-swap   # options follow the patch they belong to
+op seam-carve photo.jpg out.jpg + thermal         # an output after the input names the final file
+```
+
+The input, and the output if you give one, come right after the first patch; every later step takes only options. Without an output, the result is saved next to the input with each patch's suffix in order, the same name a chain of single `op` calls would produce. Intermediate images live in a temporary directory that is removed afterwards. If a step fails, `op` names it, shows its error, and writes nothing.
 
 ## Requirements
 
