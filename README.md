@@ -403,3 +403,15 @@ python3 ./hue-isolate/hue-isolate.py <input> [output] [--hue DEG] [--width DEG] 
 Default: `--hue 25 --width 20 --amount 1` (orange)
 
 ![hue-isolate example](_output/mclaren-hueiso.jpg)
+
+### bloom
+
+Pull out the highlights, blur them at three radii and screen them back for a soft glow.
+
+```bash
+python3 ./bloom/bloom.py <input> [output] [--amount N] [--threshold N] [--radius N]
+```
+
+Default: `--amount 1 --threshold 170 --radius 8`
+
+![bloom example](_output/mclaren-bloom.jpg)

@@ -20,6 +20,7 @@ ALL_PATCHES = [
     "edge-glow",
     "contour",
     "hue-isolate",
+    "bloom",
 ]
 
 
