@@ -460,7 +460,7 @@ Smear the image along its own contours for brushed, combed strokes.
 python3 ./flow-streak/flow-streak.py <input> [output] [--length N] [--sigma N]
 ```
 
-Default: `--length 12 --sigma 3`
+Default: `--length 36 --sigma 6`
 
 ![flow-streak example](_output/mclaren-flow.jpg)
 

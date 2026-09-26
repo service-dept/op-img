@@ -14,8 +14,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Brush strokes that follow the image's contours.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
-    parser.add_argument("--length", type=int, default=12, help="Steps traced each way along the flow, 0 to 40 (default: 12)")
-    parser.add_argument("--sigma", type=float, default=3.0, help="Smoothing of the flow field (default: 3.0)")
+    parser.add_argument("--length", type=int, default=36, help="Steps traced each way along the flow, 0 to 40 (default: 36)")
+    parser.add_argument("--sigma", type=float, default=6.0, help="Smoothing of the flow field (default: 6.0)")
     args = parser.parse_args()
 
     if not os.path.isfile(args.input):
