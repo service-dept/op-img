@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """stipple -- Convert an image to a stipple dot pattern.
 
-Randomly places dots weighted by image darkness. Black dots on transparent.
+Randomly places dots weighted by image darkness. Pink dots on transparent.
 """
 
 import argparse
@@ -66,7 +66,7 @@ def main():
 
     r = args.dot_size
     for x, y in zip(xs, ys):
-        draw.ellipse([x - r, y - r, x + r, y + r], fill=(208, 101, 33, 255))
+        draw.ellipse([x - r, y - r, x + r, y + r], fill=(236, 72, 153, 255))
 
     out.save(args.output, "PNG")
     print(f"stipple: {os.path.basename(args.input)} -> {os.path.basename(args.output)} "

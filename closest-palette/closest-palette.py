@@ -83,6 +83,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if not os.path.isfile(args.input):
+        print(f"Error: file not found: {args.input}", file=sys.stderr)
+        sys.exit(1)
+
     if not args.palette and not args.from_image:
         parser.error("Provide --palette or --from-image")
 

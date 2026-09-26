@@ -49,6 +49,10 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=None, help="RNG seed for reproducible output")
     args = parser.parse_args()
 
+    if not os.path.isfile(args.input):
+        print(f"Error: file not found: {args.input}", file=sys.stderr)
+        sys.exit(1)
+
     img = Image.open(args.input).convert("RGB")
     rng = np.random.default_rng(args.seed)
 

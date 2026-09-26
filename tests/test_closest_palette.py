@@ -37,6 +37,11 @@ class TestClosestPalette:
         r = run_tool("closest-palette", "closest-palette.py", [img])
         assert r.returncode != 0
 
+    def test_missing_input(self, run_tool):
+        r = run_tool("closest-palette", "closest-palette.py", ["/nonexistent/image.png", "--palette", "#000,#fff"])
+        assert r.returncode != 0
+        assert "not found" in r.stderr.lower()
+
     def test_no_args(self, run_tool):
         r = run_tool("closest-palette", "closest-palette.py", [])
         assert r.returncode != 0

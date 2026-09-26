@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """line-halftone -- Convert an image to a variable-width line pattern.
 
-Black lines on a transparent background, width varies with brightness.
+Pink lines on a transparent background, width varies with brightness.
 """
 
 import argparse
@@ -91,7 +91,7 @@ def main():
             if line_w < 0.5:
                 continue
 
-            draw.line([(px, py), (nx, ny)], fill=(208, 101, 33, 255), width=max(1, int(round(line_w))))
+            draw.line([(px, py), (nx, ny)], fill=(236, 72, 153, 255), width=max(1, int(round(line_w))))
 
     out.save(args.output, "PNG")
     print(f"line-halftone: {os.path.basename(args.input)} -> {os.path.basename(args.output)} "

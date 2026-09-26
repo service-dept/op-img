@@ -51,6 +51,11 @@ class TestHelp:
         assert r.returncode == 0
         assert "--severity" in r.stdout
 
+    def test_info_shell_patch(self, run_op):
+        r = run_op(["--info", "fold"])
+        assert r.returncode == 0
+        assert "--axis" in r.stdout
+
     def test_info_unknown_patch(self, run_op):
         r = run_op(["--info", "nonexistent"])
         assert r.returncode != 0

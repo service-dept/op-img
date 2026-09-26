@@ -113,6 +113,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if not os.path.isfile(args.input):
+        print(f"Error: file not found: {args.input}", file=sys.stderr)
+        sys.exit(1)
+
     # Clamp percent to valid range
     percent = max(1, min(50, args.percent))
 

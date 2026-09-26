@@ -48,6 +48,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if not os.path.isfile(args.input):
+        print(f"Error: file not found: {args.input}", file=sys.stderr)
+        sys.exit(1)
+
     img = Image.open(args.input).convert("RGB")
 
     result = posterize_hsv(img, args.h_levels, args.s_levels, args.v_levels)

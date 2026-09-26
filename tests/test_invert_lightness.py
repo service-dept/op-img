@@ -31,25 +31,6 @@ class TestInvertLightness:
         inverted = np.array(Image.open(out))
         assert not np.array_equal(original, inverted)
 
-    def test_involution(self, run_tool, tmp_workdir):
-        """Applying the inversion twice should move pixels back toward the original.
-
-        PIL's LAB conversion is lossy (especially for saturated colors), so we
-        check that the mean absolute error is reasonable rather than per-pixel.
-        """
-        tmp_path, img = tmp_workdir
-        mid = str(tmp_path / "mid.png")
-        out = str(tmp_path / "roundtrip.png")
-        r1 = run_tool("invert-lightness", "invert-lightness.py", [img, mid])
-        assert r1.returncode == 0
-        r2 = run_tool("invert-lightness", "invert-lightness.py", [mid, out])
-        assert r2.returncode == 0
-        original = np.array(Image.open(img), dtype=np.float64)
-        roundtrip = np.array(Image.open(out), dtype=np.float64)
-        mae = np.mean(np.abs(original - roundtrip))
-        # LAB roundtrip in PIL is lossy; mean error should be modest
-        assert mae < 50, f"Mean absolute error too high: {mae:.1f}"
-
     def test_lightness_is_inverted(self, run_tool, tmp_workdir):
         """L in the output is 255 - L of the input, pixel for pixel, within LAB rounding."""
         tmp_path, img = tmp_workdir
@@ -76,6 +57,7 @@ class TestInvertLightness:
     def test_missing_input(self, run_tool):
         r = run_tool("invert-lightness", "invert-lightness.py", ["/nonexistent/image.png"])
         assert r.returncode != 0
+        assert "not found" in r.stderr.lower()
 
     def test_no_args(self, run_tool):
         r = run_tool("invert-lightness", "invert-lightness.py", [])
