@@ -463,3 +463,15 @@ python3 ./flow-streak/flow-streak.py <input> [output] [--length N] [--sigma N]
 Default: `--length 12 --sigma 3`
 
 ![flow-streak example](_output/mclaren-flow.jpg)
+
+### crt
+
+Show the image on a simulated CRT: curved glass, an RGB stripe mask, scanlines and a slight glow.
+
+```bash
+python3 ./crt/crt.py <input> [output] [--amount N] [--pitch PX] [--curve N]
+```
+
+Default: `--amount 1 --pitch 3 --curve 0.12`
+
+![crt example](_output/mclaren-crt.jpg)
