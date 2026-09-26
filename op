@@ -6,10 +6,11 @@ while [[ -L "$SOURCE" ]]; do
   SOURCE="$(readlink "$SOURCE")"
 done
 SCRIPT_DIR="$(cd "$(dirname "$SOURCE")" && pwd)"
+PATCH_DIR="$SCRIPT_DIR/patches"
 
 list_patches() {
   echo "Available patches:"
-  for dir in "$SCRIPT_DIR"/*/; do
+  for dir in "$PATCH_DIR"/*/; do
     name="$(basename "$dir")"
     if [[ -f "$dir/$name.sh" || -f "$dir/$name.py" ]]; then
       echo "  $name"
@@ -19,7 +20,7 @@ list_patches() {
 
 list_random_patches() {
   local patches=()
-  for dir in "$SCRIPT_DIR"/*/; do
+  for dir in "$PATCH_DIR"/*/; do
     name="$(basename "$dir")"
     if [[ -f "$dir/$name.sh" || -f "$dir/$name.py" ]]; then
       patches+=("$name")
@@ -68,8 +69,8 @@ if [[ "$1" == "--info" ]]; then
     exit 1
   fi
   patch="$2"
-  script_sh="$SCRIPT_DIR/$patch/$patch.sh"
-  script_py="$SCRIPT_DIR/$patch/$patch.py"
+  script_sh="$PATCH_DIR/$patch/$patch.sh"
+  script_py="$PATCH_DIR/$patch/$patch.py"
   if [[ -f "$script_sh" ]]; then
     exec "$script_sh" --help
   elif [[ -f "$script_py" ]]; then
@@ -83,10 +84,10 @@ fi
 # Prints the script that runs a patch, or nothing if the patch does not exist.
 patch_script() {
   local name="$1"
-  if [[ -f "$SCRIPT_DIR/$name/$name.sh" ]]; then
-    echo "$SCRIPT_DIR/$name/$name.sh"
-  elif [[ -f "$SCRIPT_DIR/$name/$name.py" ]]; then
-    echo "$SCRIPT_DIR/$name/$name.py"
+  if [[ -f "$PATCH_DIR/$name/$name.sh" ]]; then
+    echo "$PATCH_DIR/$name/$name.sh"
+  elif [[ -f "$PATCH_DIR/$name/$name.py" ]]; then
+    echo "$PATCH_DIR/$name/$name.py"
   fi
 }
 

@@ -40,7 +40,7 @@ def tmp_workdir(tmp_path):
 def run_tool():
     """Run a tool script directly via subprocess. Returns CompletedProcess."""
     def _run(tool_dir: str, script_name: str, args: list[str], **kwargs) -> subprocess.CompletedProcess:
-        script_path = os.path.join(ROOT, tool_dir, script_name)
+        script_path = os.path.join(ROOT, "patches", tool_dir, script_name)
         if script_name.endswith(".py"):
             cmd = ["python3", script_path] + args
         else:
