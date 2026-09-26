@@ -14,7 +14,8 @@ def invert_lightness(image: Image.Image) -> Image.Image:
     lab = image.convert("LAB")
     arr = np.array(lab)
     arr[:, :, 0] = 255 - arr[:, :, 0]
-    lab_out = Image.merge("LAB", [Image.fromarray(arr[:, :, c]) for c in range(3)])
+    # Image.merge("LAB", ...) of L-mode bands corrupts the image on Pillow 12; build the LAB image directly.
+    lab_out = Image.fromarray(arr, "LAB")
     return lab_out.convert("RGB")
 
 
