@@ -319,3 +319,15 @@ python3 ./fft-phase/fft-phase.py <input> [output] [--amount N] [--seed N]
 Default: `--amount 0.35`
 
 ![fft-phase example](_output/mclaren-fftphase.jpg)
+
+### zoom-blur
+
+Average copies of the image scaled up about a centre point, for radial warp-speed streaks.
+
+```bash
+python3 ./zoom-blur/zoom-blur.py <input> [output] [--amount N] [--center X,Y] [--samples N]
+```
+
+Default: `--amount 0.3 --center 0.5,0.5 --samples 32`
+
+![zoom-blur example](_output/mclaren-zoomblur.jpg)

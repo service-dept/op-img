@@ -13,6 +13,7 @@ ALL_PATCHES = [
     "slit-scan", "stipple", "thermal", "tile-shuffle",
     "wrong-stride",
     "fft-phase",
+    "zoom-blur",
 ]
 
 
