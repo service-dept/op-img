@@ -19,6 +19,10 @@ NEW_PATCHES = [
     ("contour", "contour"),
     ("hue-isolate", "hueiso"),
     ("bloom", "bloom"),
+    ("voronoi-mosaic", "voronoi"),
+    ("oil-paint", "oilpaint"),
+    ("tilt-shift", "tiltshift"),
+    ("flow-streak", "flow"),
 ]
 NAMES = [name for name, _ in NEW_PATCHES]
 
