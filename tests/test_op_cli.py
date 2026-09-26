@@ -25,7 +25,6 @@ ALL_PATCHES = [
     "oil-paint",
     "tilt-shift",
     "flow-streak",
-    "crt",
     "dither",
     "jpeg-rot",
     "ascii",

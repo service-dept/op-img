@@ -60,17 +60,6 @@ Default: `--size 64`
 
 ![res-crush example](_output/mclaren-pixelate-64.jpg)
 
-### closest-palette
-
-Snap every pixel to its nearest color in a given palette. No dithering -- hard color boundaries.
-
-```bash
-python3 ./closest-palette/closest-palette.py <input> [output] --palette "#hex,#hex,..."
-python3 ./closest-palette/closest-palette.py <input> [output] --from-image ref.png --colors N
-```
-
-![closest-palette example](_output/mclaren-palette.jpg)
-
 ### channel-offset
 
 Shift R, G, B channels by independent pixel amounts for a misregistered print / chromatic aberration look.
@@ -115,59 +104,6 @@ python3 ./scan-glitch/scan-glitch.py <input> [output] [--severity N] [--seed N]
 
 ![scan-glitch example](_output/mclaren-glitch.jpg)
 
-### dot-halftone
-
-Convert to a halftone dot grid where dot size varies with brightness. Pink dots on transparent background.
-
-```bash
-python3 ./dot-halftone/dot-halftone.py <input> [output] [--spacing N] [--min-dot N] [--max-dot N] [--angle N]
-```
-
-![dot-halftone example](_output/mclaren-halftone.jpg)
-
-### line-halftone
-
-Variable-width lines whose thickness maps to brightness. Pink lines on transparent background.
-
-```bash
-python3 ./line-halftone/line-halftone.py <input> [output] [--spacing N] [--min-width N] [--max-width N] [--angle N]
-```
-
-![line-halftone example](_output/mclaren-lines.jpg)
-
-### cross-hatch
-
-Multiple line-halftone passes at different angles, each gated by a brightness threshold. Darker areas get more layers of hatching. Pink lines on transparent background.
-
-```bash
-python3 ./cross-hatch/cross-hatch.py <input> [output] [--layers N] [--spacing N] [--thresholds N,N,N]
-```
-
-![cross-hatch example](_output/mclaren-hatch.jpg)
-
-### stipple
-
-Random dot placement where density maps to brightness. Pink dots on transparent background.
-
-```bash
-python3 ./stipple/stipple.py <input> [output] [--dots N] [--dot-size N] [--seed N]
-```
-
-![stipple example](_output/mclaren-stipple.jpg)
-
-
-### isolate-threshold
-
-Extract dark pixels from an image with a transparent background. Optionally recolor them and upscale with nearest-neighbor.
-
-```bash
-./isolate-threshold/isolate-threshold.sh <input> [output] [--scale N] [--threshold N] [--color "#hex"]
-```
-
-Default: `--scale 1 --threshold 50 --color "#ff0000"`
-
-![isolate-threshold example](_output/mclaren-threshold.jpg)
-
 ### channel-swap
 
 Rearrange RGB channels — swap, duplicate, or reorder color channels.
@@ -191,16 +127,6 @@ python3 ./echo/echo.py <input> [output] [--count N] [--offset-x N] [--offset-y N
 Default: `--count 12 --offset-x 30 --offset-y 12 --decay 0.6 --blend additive`
 
 ![echo example](_output/mclaren-echo.jpg)
-
-### invert-lightness
-
-Invert the lightness channel in LAB color space — dark becomes light and vice versa, while hue and saturation are preserved.
-
-```bash
-python3 ./invert-lightness/invert-lightness.py <input> [output]
-```
-
-![invert-lightness example](_output/mclaren-invl.jpg)
 
 ### kaleidoscope
 
@@ -226,18 +152,6 @@ Default: `--mode to-polar`
 
 ![polar example](_output/mclaren-polar.jpg)
 
-### posterize-hsv
-
-Quantize HSV channels independently for a posterized look with hue control.
-
-```bash
-python3 ./posterize-hsv/posterize-hsv.py <input> [output] [--h-levels N] [--s-levels N] [--v-levels N]
-```
-
-Default: `--h-levels 8 --s-levels 4 --v-levels 4`
-
-![posterize-hsv example](_output/mclaren-posterize.jpg)
-
 ### raw-bend
 
 Treat pixel data as a raw audio signal and apply echo, chorus, and bitcrush distortion.
@@ -247,6 +161,8 @@ python3 ./raw-bend/raw-bend.py <input> [output] [--echo-strength N] [--echo-dela
 ```
 
 Default: `--echo-strength 0.5 --echo-delay 500 --chorus 0.3 --bitcrush 0`
+
+Example: `--echo-strength 0.8 --echo-delay 2000 --chorus 0.7`
 
 ![raw-bend example](_output/mclaren-rawbend.jpg)
 
@@ -274,16 +190,6 @@ Default: `--slits <width> --max-angle 180`
 
 ![slit-scan example](_output/mclaren-slitscan.jpg)
 
-### thermal
-
-Map brightness to a false-color thermal palette (black to blue to red to yellow to white).
-
-```bash
-python3 ./thermal/thermal.py <input> [output]
-```
-
-![thermal example](_output/mclaren-thermal.jpg)
-
 ### tile-shuffle
 
 Chop the image into an NxN grid and randomly permute the tiles.
@@ -293,6 +199,8 @@ python3 ./tile-shuffle/tile-shuffle.py <input> [output] [--grid N] [--seed N]
 ```
 
 Default: `--grid 4`
+
+Example: `--grid 8`
 
 ![tile-shuffle example](_output/mclaren-shuffle.jpg)
 
@@ -392,18 +300,6 @@ Default: `--levels 16 --blur 2 --width 1 --color #ec4899 --amount 1`
 
 ![contour example](_output/mclaren-contour.jpg)
 
-### hue-isolate
-
-Keep one hue band in full colour and turn everything else grey.
-
-```bash
-python3 ./hue-isolate/hue-isolate.py <input> [output] [--hue DEG] [--width DEG] [--amount N]
-```
-
-Default: `--hue 25 --width 20 --amount 1` (orange)
-
-![hue-isolate example](_output/mclaren-hueiso.jpg)
-
 ### bloom
 
 Pull out the highlights, blur them at three radii and screen them back for a soft glow.
@@ -413,6 +309,8 @@ python3 ./bloom/bloom.py <input> [output] [--amount N] [--threshold N] [--radius
 ```
 
 Default: `--amount 1 --threshold 170 --radius 8`
+
+Example: `--amount 2 --threshold 110 --radius 16`
 
 ![bloom example](_output/mclaren-bloom.jpg)
 
@@ -464,18 +362,6 @@ Default: `--length 36 --sigma 6`
 
 ![flow-streak example](_output/mclaren-flow.jpg)
 
-### crt
-
-Show the image on a simulated CRT: curved glass, an RGB stripe mask, scanlines and a slight glow.
-
-```bash
-python3 ./crt/crt.py <input> [output] [--amount N] [--pitch PX] [--curve N]
-```
-
-Default: `--amount 1 --pitch 3 --curve 0.12`
-
-![crt example](_output/mclaren-crt.jpg)
-
 ### dither
 
 Dither to N levels per channel with a Bayer matrix, or with Floyd–Steinberg or Atkinson error diffusion. Error diffusion takes a few seconds on the README image.
@@ -511,3 +397,110 @@ python3 ./ascii/ascii.py <input> [output] [--cell PX] [--charset CHARS]
 Default: `--cell 10 --charset " .:-=+*#%@"`
 
 ![ascii example](_output/mclaren-ascii.jpg)
+
+### isolate-threshold
+
+Extract dark pixels from an image with a transparent background. Optionally recolor them and upscale with nearest-neighbor.
+
+```bash
+./isolate-threshold/isolate-threshold.sh <input> [output] [--scale N] [--threshold N] [--color "#hex"]
+```
+
+Default: `--scale 1 --threshold 50 --color "#ff0000"`
+
+![isolate-threshold example](_output/mclaren-threshold.jpg)
+
+### closest-palette
+
+Snap every pixel to its nearest color in a given palette. No dithering -- hard color boundaries.
+
+```bash
+python3 ./closest-palette/closest-palette.py <input> [output] --palette "#hex,#hex,..."
+python3 ./closest-palette/closest-palette.py <input> [output] --from-image ref.png --colors N
+```
+
+![closest-palette example](_output/mclaren-palette.jpg)
+
+### invert-lightness
+
+Invert the lightness channel in LAB color space — dark becomes light and vice versa, while hue and saturation are preserved.
+
+```bash
+python3 ./invert-lightness/invert-lightness.py <input> [output]
+```
+
+![invert-lightness example](_output/mclaren-invl.jpg)
+
+### posterize-hsv
+
+Quantize HSV channels independently for a posterized look with hue control.
+
+```bash
+python3 ./posterize-hsv/posterize-hsv.py <input> [output] [--h-levels N] [--s-levels N] [--v-levels N]
+```
+
+Default: `--h-levels 8 --s-levels 4 --v-levels 4`
+
+![posterize-hsv example](_output/mclaren-posterize.jpg)
+
+### thermal
+
+Map brightness to a false-color thermal palette (black to blue to red to yellow to white).
+
+```bash
+python3 ./thermal/thermal.py <input> [output]
+```
+
+![thermal example](_output/mclaren-thermal.jpg)
+
+### hue-isolate
+
+Keep one hue band in full colour and turn everything else grey.
+
+```bash
+python3 ./hue-isolate/hue-isolate.py <input> [output] [--hue DEG] [--width DEG] [--amount N]
+```
+
+Default: `--hue 25 --width 20 --amount 1` (orange)
+
+![hue-isolate example](_output/mclaren-hueiso.jpg)
+
+### dot-halftone
+
+Convert to a halftone dot grid where dot size varies with brightness. Pink dots on transparent background.
+
+```bash
+python3 ./dot-halftone/dot-halftone.py <input> [output] [--spacing N] [--min-dot N] [--max-dot N] [--angle N]
+```
+
+![dot-halftone example](_output/mclaren-halftone.jpg)
+
+### line-halftone
+
+Variable-width lines whose thickness maps to brightness. Pink lines on transparent background.
+
+```bash
+python3 ./line-halftone/line-halftone.py <input> [output] [--spacing N] [--min-width N] [--max-width N] [--angle N]
+```
+
+![line-halftone example](_output/mclaren-lines.jpg)
+
+### cross-hatch
+
+Multiple line-halftone passes at different angles, each gated by a brightness threshold. Darker areas get more layers of hatching. Pink lines on transparent background.
+
+```bash
+python3 ./cross-hatch/cross-hatch.py <input> [output] [--layers N] [--spacing N] [--thresholds N,N,N]
+```
+
+![cross-hatch example](_output/mclaren-hatch.jpg)
+
+### stipple
+
+Random dot placement where density maps to brightness. Pink dots on transparent background.
+
+```bash
+python3 ./stipple/stipple.py <input> [output] [--dots N] [--dot-size N] [--seed N]
+```
+
+![stipple example](_output/mclaren-stipple.jpg)

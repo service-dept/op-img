@@ -23,7 +23,6 @@ NEW_PATCHES = [
     ("oil-paint", "oilpaint"),
     ("tilt-shift", "tiltshift"),
     ("flow-streak", "flow"),
-    ("crt", "crt"),
     ("dither", "dither"),
     ("jpeg-rot", "jpegrot"),
     ("ascii", "ascii"),
