@@ -1,5 +1,7 @@
 # op-img
 
+![The McLaren photo cycling through seam-carve, channel-swap, polar, pixel-sort, invert-lightness, wrong-stride and fold, each layered over the last](_output/op-img-hero.avif)
+
 Image processing tools for isolating, recoloring, and destroying images.
 
 Every script follows `<command> <input> [output] [options]`. If output is omitted, saves next to the input with a descriptive suffix.
