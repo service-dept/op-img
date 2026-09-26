@@ -14,6 +14,11 @@ NEW_PATCHES = [
     ("zoom-blur", "zoomblur"),
     ("swirl", "swirl"),
     ("displace", "displace"),
+    ("drip", "drip"),
+    ("edge-glow", "edgeglow"),
+    ("contour", "contour"),
+    ("hue-isolate", "hueiso"),
+    ("bloom", "bloom"),
 ]
 NAMES = [name for name, _ in NEW_PATCHES]
 
