@@ -28,7 +28,7 @@ op                                           # list all tools
 ## Requirements
 
 - [ImageMagick](https://imagemagick.org/) for shell scripts: `brew install imagemagick`
-- [Python 3](https://www.python.org/) with Pillow and numpy for Python scripts: `pip3 install Pillow numpy scipy`
+- [Python 3](https://www.python.org/) with Pillow, numpy and scipy for Python scripts: `pip3 install Pillow numpy scipy`
 
 ## Tools
 
@@ -117,7 +117,7 @@ python3 ./scan-glitch/scan-glitch.py <input> [output] [--severity N] [--seed N]
 
 ### dot-halftone
 
-Convert to a halftone dot grid where dot size varies with brightness. Black dots on transparent background.
+Convert to a halftone dot grid where dot size varies with brightness. Pink dots on transparent background.
 
 ```bash
 python3 ./dot-halftone/dot-halftone.py <input> [output] [--spacing N] [--min-dot N] [--max-dot N] [--angle N]
@@ -127,7 +127,7 @@ python3 ./dot-halftone/dot-halftone.py <input> [output] [--spacing N] [--min-dot
 
 ### line-halftone
 
-Variable-width lines whose thickness maps to brightness. Black lines on transparent background.
+Variable-width lines whose thickness maps to brightness. Pink lines on transparent background.
 
 ```bash
 python3 ./line-halftone/line-halftone.py <input> [output] [--spacing N] [--min-width N] [--max-width N] [--angle N]
@@ -137,7 +137,7 @@ python3 ./line-halftone/line-halftone.py <input> [output] [--spacing N] [--min-w
 
 ### cross-hatch
 
-Multiple line-halftone passes at different angles, each gated by a brightness threshold. Darker areas get more layers of hatching.
+Multiple line-halftone passes at different angles, each gated by a brightness threshold. Darker areas get more layers of hatching. Pink lines on transparent background.
 
 ```bash
 python3 ./cross-hatch/cross-hatch.py <input> [output] [--layers N] [--spacing N] [--thresholds N,N,N]
@@ -147,7 +147,7 @@ python3 ./cross-hatch/cross-hatch.py <input> [output] [--layers N] [--spacing N]
 
 ### stipple
 
-Random dot placement where density maps to brightness. Black dots on transparent background.
+Random dot placement where density maps to brightness. Pink dots on transparent background.
 
 ```bash
 python3 ./stipple/stipple.py <input> [output] [--dots N] [--dot-size N] [--seed N]
@@ -185,7 +185,7 @@ Default: `--map B,G,R` (swaps red and blue)
 Composite the image on itself with offset and fade for a ghosting/echo effect.
 
 ```bash
-python3 ./echo/echo.py <input> [output] [--count N] [--offset-x N] [--offset-y N] [--decay N]
+python3 ./echo/echo.py <input> [output] [--count N] [--offset-x N] [--offset-y N] [--decay N] [--blend additive|screen|multiply]
 ```
 
 Default: `--count 12 --offset-x 30 --offset-y 12 --decay 0.6 --blend additive`
@@ -210,7 +210,7 @@ Extract a wedge from the image and mirror/rotate it around the center for a kale
 python3 ./kaleidoscope/kaleidoscope.py <input> [output] [--segments N] [--angle N]
 ```
 
-Default: `--segments 6 --angle 0`
+Default: `--segments 6 --angle 90`
 
 ![kaleidoscope example](_output/mclaren-kaleido.jpg)
 

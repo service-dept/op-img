@@ -45,6 +45,10 @@ def main() -> None:
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     args = parser.parse_args()
 
+    if not os.path.isfile(args.input):
+        print(f"Error: file not found: {args.input}", file=sys.stderr)
+        sys.exit(1)
+
     img = Image.open(args.input).convert("RGB")
     gray = np.array(img.convert("L"))
 

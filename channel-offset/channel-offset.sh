@@ -25,6 +25,7 @@ while [ $# -gt 0 ]; do
     --r) R_OFF="$2"; shift 2 ;;
     --g) G_OFF="$2"; shift 2 ;;
     --b) B_OFF="$2"; shift 2 ;;
+    -h|--help) sed -n '2,/^$/s/^# \{0,1\}//p' "$0"; exit 0 ;;
     -*)  echo "Unknown option: $1" >&2; exit 1 ;;
     *)
       if [ -z "$INPUT" ]; then INPUT="$1"

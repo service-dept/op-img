@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """dot-halftone -- Convert an image to a halftone dot pattern.
 
-Black dots on a transparent background, sized by local brightness.
+Pink dots on a transparent background, sized by local brightness.
 """
 
 import argparse
@@ -80,7 +80,7 @@ def main():
 
             draw.ellipse(
                 [ix - radius, iy - radius, ix + radius, iy + radius],
-                fill=(208, 101, 33, 255),
+                fill=(236, 72, 153, 255),
             )
 
     out.save(args.output, "PNG")

@@ -69,10 +69,10 @@ if [[ "$1" == "--info" ]]; then
   patch="$2"
   script_sh="$SCRIPT_DIR/$patch/$patch.sh"
   script_py="$SCRIPT_DIR/$patch/$patch.py"
-  if [[ -f "$script_py" ]]; then
-    exec python3 "$script_py" --help
-  elif [[ -f "$script_sh" ]]; then
+  if [[ -f "$script_sh" ]]; then
     exec "$script_sh" --help
+  elif [[ -f "$script_py" ]]; then
+    exec python3 "$script_py" --help
   else
     echo "Error: unknown patch '$patch'" >&2
     exit 1

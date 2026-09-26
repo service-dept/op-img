@@ -26,6 +26,7 @@ while [ $# -gt 0 ]; do
     --scale)     SCALE="$2"; shift 2 ;;
     --threshold) THRESHOLD="$2"; shift 2 ;;
     --color)     COLOR="$2"; shift 2 ;;
+    -h|--help) sed -n '2,/^$/s/^# \{0,1\}//p' "$0"; exit 0 ;;
     -*)          echo "Unknown option: $1" >&2; exit 1 ;;
     *)
       if [ -z "$INPUT" ]; then INPUT="$1"

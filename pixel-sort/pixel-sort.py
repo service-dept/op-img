@@ -103,6 +103,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if not os.path.isfile(args.input):
+        print(f"Error: file not found: {args.input}", file=sys.stderr)
+        sys.exit(1)
+
     img = Image.open(args.input).convert("RGB")
     pixels = np.array(img)
     metric_fn = METRIC_FN[args.by]
