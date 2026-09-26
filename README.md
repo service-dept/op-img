@@ -307,3 +307,15 @@ python3 ./wrong-stride/wrong-stride.py <input> [output] [--offset N]
 Default: `--offset 1`
 
 ![wrong-stride example](_output/mclaren-stride.jpg)
+
+### fft-phase
+
+Keep each channel's Fourier magnitude and blend in random phase, so the image dissolves into a texture with the same spectrum.
+
+```bash
+python3 ./fft-phase/fft-phase.py <input> [output] [--amount N] [--seed N]
+```
+
+Default: `--amount 0.35`
+
+![fft-phase example](_output/mclaren-fftphase.jpg)

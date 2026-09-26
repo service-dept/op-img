@@ -12,6 +12,7 @@ ALL_PATCHES = [
     "posterize-hsv", "raw-bend", "res-crush", "scan-glitch", "seam-carve",
     "slit-scan", "stipple", "thermal", "tile-shuffle",
     "wrong-stride",
+    "fft-phase",
 ]
 
 
