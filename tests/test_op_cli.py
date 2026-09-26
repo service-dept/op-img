@@ -15,6 +15,7 @@ ALL_PATCHES = [
     "fft-phase",
     "zoom-blur",
     "swirl",
+    "displace",
 ]
 
 

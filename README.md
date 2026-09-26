@@ -343,3 +343,15 @@ python3 ./swirl/swirl.py <input> [output] [--angle DEG] [--radius N] [--center X
 Default: `--angle 360 --radius 1.0 --center 0.5,0.5`
 
 ![swirl example](_output/mclaren-swirl.jpg)
+
+### displace
+
+Move each pixel along an angle by an amount taken from its own blurred brightness, so light and dark areas tear apart in opposite directions.
+
+```bash
+python3 ./displace/displace.py <input> [output] [--amount PX] [--angle DEG] [--blur N]
+```
+
+Default: `--amount 60 --angle 0 --blur 3`
+
+![displace example](_output/mclaren-displace.jpg)
