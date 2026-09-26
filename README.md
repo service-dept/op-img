@@ -492,6 +492,20 @@ Default: `--map B,G,R` (swaps red and blue)
 
 ![channel-swap example](_output/mclaren-chswap.jpg)
 
+### recolor
+
+Repaint the image's most prevalent colours with the colours you give, most prevalent first, keeping their light and shade. Greys, black and white are left alone.
+
+```bash
+python3 ./recolor/recolor.py <input> [output] [--colors C1,C2] [--amount N] [--clusters N]
+```
+
+Default: `--colors "#ec4899" --amount 1 --clusters 6`
+
+Example: `--colors "#1e3a8a,#facc15"`
+
+![recolor example](_output/mclaren-recolor.jpg)
+
 ### dot-halftone
 
 Convert to a halftone dot grid where dot size varies with brightness. Pink dots on transparent background.
