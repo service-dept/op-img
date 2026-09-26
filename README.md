@@ -451,3 +451,15 @@ python3 ./tilt-shift/tilt-shift.py <input> [output] [--blur N] [--focus N] [--ba
 Default: `--blur 10 --focus 0.62 --band 0.25`
 
 ![tilt-shift example](_output/mclaren-tiltshift.jpg)
+
+### flow-streak
+
+Smear the image along its own contours for brushed, combed strokes.
+
+```bash
+python3 ./flow-streak/flow-streak.py <input> [output] [--length N] [--sigma N]
+```
+
+Default: `--length 12 --sigma 3`
+
+![flow-streak example](_output/mclaren-flow.jpg)

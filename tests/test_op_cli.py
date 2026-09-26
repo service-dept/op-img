@@ -24,6 +24,7 @@ ALL_PATCHES = [
     "voronoi-mosaic",
     "oil-paint",
     "tilt-shift",
+    "flow-streak",
 ]
 
 
