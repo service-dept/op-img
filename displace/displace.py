@@ -14,7 +14,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Displace pixels by their own brightness.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
-    parser.add_argument("--amount", type=float, default=60.0, help="Maximum displacement in pixels, 0 to 300 (default: 60.0)")
+    parser.add_argument("--amount", type=float, default=150.0, help="Maximum displacement in pixels, 0 to 300 (default: 150.0)")
     parser.add_argument("--angle", type=float, default=0.0, help="Displacement direction in degrees (default: 0.0)")
     parser.add_argument("--blur", type=float, default=3.0, help="Blur sigma of the brightness map (default: 3.0)")
     args = parser.parse_args()

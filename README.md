@@ -352,7 +352,7 @@ Move each pixel along an angle by an amount taken from its own blurred brightnes
 python3 ./displace/displace.py <input> [output] [--amount PX] [--angle DEG] [--blur N]
 ```
 
-Default: `--amount 60 --angle 0 --blur 3`
+Default: `--amount 150 --angle 0 --blur 3`
 
 ![displace example](_output/mclaren-displace.jpg)
 
