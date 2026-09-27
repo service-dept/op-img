@@ -31,6 +31,20 @@ def channel_offset(image: Image.Image, offsets: list[tuple[int, int]]) -> Image.
     return Image.fromarray(out)
 
 
+def join_pair_values(argv: list[str], options: set[str]) -> list[str]:
+    """Pass each X,Y option as --opt=VALUE. Before Python 3.14, argparse reads a value that
+    starts with a minus, such as -120,-40, as another option rather than as the value."""
+    out, i = [], 0
+    while i < len(argv):
+        if argv[i] in options and i + 1 < len(argv):
+            out.append(f"{argv[i]}={argv[i + 1]}")
+            i += 2
+        else:
+            out.append(argv[i])
+            i += 1
+    return out
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Shift RGB channels by independent pixel offsets.")
     parser.add_argument("input", help="Input image path")
@@ -38,7 +52,7 @@ def main() -> None:
     parser.add_argument("--r", type=parse_offset, default=(140, 50), help="Red channel offset X,Y in pixels (default: 140,50)")
     parser.add_argument("--g", type=parse_offset, default=(-20, 40), help="Green channel offset X,Y in pixels (default: -20,40)")
     parser.add_argument("--b", type=parse_offset, default=(-120, -40), help="Blue channel offset X,Y in pixels (default: -120,-40)")
-    args = parser.parse_args()
+    args = parser.parse_args(join_pair_values(sys.argv[1:], {"--r", "--g", "--b"}))
 
     if not os.path.isfile(args.input):
         print(f"Error: file not found: {args.input}", file=sys.stderr)
