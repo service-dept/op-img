@@ -32,6 +32,7 @@ ALL_PATCHES = [
     "dither",
     "jpeg-rot",
     "ascii",
+    "recolor",
 ]
 
 
@@ -225,3 +226,10 @@ class TestStack:
         r = run_op(["pixel-sort", img, str(tmp_path / "out.jpg"), "+", "channel-swap"])
         assert r.returncode == 0, r.stderr
         assert sorted(p.name for p in tmp_path.iterdir()) == ["input.png", "out.jpg"]
+
+class TestLayout:
+    def test_patches_live_under_patches(self):
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        for name in ALL_PATCHES:
+            assert os.path.isdir(os.path.join(root, "patches", name)), f"{name} is not under patches/"
+            assert not os.path.exists(os.path.join(root, name)), f"{name} is still at the root"

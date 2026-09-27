@@ -26,6 +26,7 @@ NEW_PATCHES = [
     ("dither", "dither"),
     ("jpeg-rot", "jpegrot"),
     ("ascii", "ascii"),
+    ("recolor", "recolor"),
 ]
 NAMES = [name for name, _ in NEW_PATCHES]
 
