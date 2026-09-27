@@ -1,7 +1,6 @@
 """Shared fixtures for op-img test suite."""
 
 import os
-import shutil
 import subprocess
 
 import numpy as np
@@ -11,7 +10,6 @@ from PIL import Image
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OP = os.path.join(ROOT, "op")
 
-HAS_IMAGEMAGICK = shutil.which("magick") is not None
 
 
 def _make_gradient(path: str, size: int = 64) -> str:
@@ -76,7 +74,3 @@ def assert_valid_image(path: str, min_size: int = 100) -> Image.Image:
     img = Image.open(path)
     img.load()  # force decode
     return img
-
-
-def skip_without_imagemagick():
-    return pytest.mark.skipif(not HAS_IMAGEMAGICK, reason="ImageMagick not installed")
