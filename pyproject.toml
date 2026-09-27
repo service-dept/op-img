@@ -6,6 +6,8 @@ build-backend = "hatchling.build"
 name = "op-img"
 description = "A composable image manipulation CLI"
 requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
 dependencies = ["Pillow>=10.1", "numpy", "scipy"]
 dynamic = ["version", "readme"]
 keywords = ["image", "glitch", "cli", "pixel-sort", "image-processing"]
@@ -34,7 +36,7 @@ include = ["op_img", "patches/*/*.py", "patches/*/*.sh", "patches/*/requirements
 sources = { "patches" = "op_img/patches" }
 
 [tool.hatch.build.targets.sdist]
-include = ["op_img", "patches/*/*.py", "patches/*/*.sh", "patches/*/requirements.txt", "tests", "op-img", "README.md"]
+include = ["op_img", "patches/*/*.py", "patches/*/*.sh", "patches/*/requirements.txt", "tests", "op-img", "README.md", "LICENSE"]
 
 # PyPI can't resolve the README's relative image paths, so point them at GitHub.
 [tool.hatch.metadata.hooks.fancy-pypi-readme]
@@ -46,6 +48,10 @@ path = "README.md"
 [[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
 pattern = '\]\((patches|assets)/'
 replacement = '](https://raw.githubusercontent.com/service-dept/op-img/main/\1/'
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\(LICENSE\)'
+replacement = '](https://github.com/service-dept/op-img/blob/main/LICENSE)'
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
