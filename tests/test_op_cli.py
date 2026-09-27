@@ -207,6 +207,25 @@ class TestStack:
         assert list(scratch.iterdir()) == []
 
 
+    def test_filename_with_newline(self, run_op, tmp_path):
+        img = _make_gradient(str(tmp_path / "a\nb.png"))
+        r = run_op(["pixel-sort", img, "+", "channel-swap"])
+        assert r.returncode == 0, r.stderr
+        assert_valid_image(str(tmp_path / "a\nb-psort-chswap.png"))
+
+    def test_failed_last_step_leaves_existing_output(self, run_op, tmp_workdir):
+        tmp_path, img = tmp_workdir
+        out = tmp_path / "out.png"
+        out.write_bytes(b"keep me")
+        r = run_op(["pixel-sort", img, str(out), "+", "pixel-sort", "--direction", "sideways"])
+        assert r.returncode != 0
+        assert out.read_bytes() == b"keep me"
+
+    def test_success_leaves_no_temporary_file_beside_output(self, run_op, tmp_workdir):
+        tmp_path, img = tmp_workdir
+        r = run_op(["pixel-sort", img, str(tmp_path / "out.jpg"), "+", "channel-swap"])
+        assert r.returncode == 0, r.stderr
+        assert sorted(p.name for p in tmp_path.iterdir()) == ["input.png", "out.jpg"]
 
 class TestLayout:
     def test_patches_live_under_patches(self):

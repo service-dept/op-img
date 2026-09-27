@@ -111,37 +111,33 @@ unknown_patch() {
 # Stacking: op <patch> <input> [output] [options] + <patch> [options] + ...
 # Each step runs in a temporary directory on the previous step's result, with
 # the patch's own default name, so the suffixes accumulate as they would in a
-# manual chain. The last step writes to [output] when one is given; otherwise
-# the result lands beside the input.
+# manual chain. The final image is moved into place only after every step has
+# succeeded: to [output] when one is given, otherwise beside the input.
 stack() {
-  local steps=() step="" arg
-  for arg in "$@"; do
-    if [[ "$arg" == "+" ]]; then
-      steps+=("$step")
-      step=""
-    else
-      step+="${step:+$'\x1f'}$arg"
+  # Keep the arguments as given; record where each step starts and how long it is.
+  local args=("$@") starts=() lengths=() i n start=0
+  for (( i = 0; i <= ${#args[@]}; i++ )); do
+    if (( i == ${#args[@]} )) || [[ "${args[i]}" == "+" ]]; then
+      starts+=("$start")
+      lengths+=("$((i - start))")
+      start=$((i + 1))
     fi
   done
-  steps+=("$step")
+  n=${#starts[@]}
 
-  local i n=${#steps[@]} parts name
   for (( i = 0; i < n; i++ )); do
-    if [[ -z "${steps[i]}" ]]; then
+    if (( lengths[i] == 0 )); then
       echo "Error: empty step $((i + 1)) in stack; put a patch name after each '+'" >&2
       exit 1
     fi
-    IFS=$'\x1f' read -r -a parts <<< "${steps[i]}"
-    name="${parts[0]}"
-    [[ -n "$(patch_script "$name")" ]] || unknown_patch "$name"
+    [[ -n "$(patch_script "${args[starts[i]]}")" ]] || unknown_patch "${args[starts[i]]}"
   done
 
-  IFS=$'\x1f' read -r -a parts <<< "${steps[0]}"
-  if [[ ${#parts[@]} -lt 2 ]]; then
+  if (( lengths[0] < 2 )); then
     echo "Usage: op <patch> <input> [output] [options] + <patch> [options] ..." >&2
     exit 1
   fi
-  local input="${parts[1]}" output="" first_opts=("${parts[@]:2}")
+  local input="${args[1]}" output="" first_opts=("${args[@]:2:lengths[0]-2}")
   if [[ ${#first_opts[@]} -gt 0 && "${first_opts[0]}" != -* ]]; then
     output="${first_opts[0]}"
     first_opts=("${first_opts[@]:1}")
@@ -157,33 +153,32 @@ stack() {
   local current="$work/$(basename "$input")"
   cp "$input" "$current"
 
-  local opts made file log="$work/.step.log" status script
+  local name opts made file log="$work/.step.log" status script final=""
   for (( i = 0; i < n; i++ )); do
-    IFS=$'\x1f' read -r -a parts <<< "${steps[i]}"
-    name="${parts[0]}"
+    name="${args[starts[i]]}"
     if (( i == 0 )); then
       opts=("${first_opts[@]}")
     else
-      opts=("${parts[@]:1}")
+      opts=("${args[@]:starts[i]+1:lengths[i]-1}")
     fi
     script="$(patch_script "$name")"
-    if (( i == n - 1 )) && [[ -n "$output" ]]; then
-      status=0
-      run_script "$script" "$current" "$output" "${opts[@]}" 2> "$log" || status=$?
-      if (( status != 0 )); then
-        echo "Error: step $((i + 1)) ($name) failed" >&2
-        cat "$log" >&2
-        exit "$status"
-      fi
-      echo "Stacked $n patches → $output" >&2
-      return 0
-    fi
     status=0
-    run_script "$script" "$current" "${opts[@]}" 2> "$log" || status=$?
+    if (( i == n - 1 )) && [[ -n "$output" ]]; then
+      # Keep the output's name so its extension still picks the format.
+      mkdir "$work/final"
+      final="$work/final/$(basename "$output")"
+      run_script "$script" "$current" "$final" "${opts[@]}" 2> "$log" || status=$?
+    else
+      run_script "$script" "$current" "${opts[@]}" 2> "$log" || status=$?
+    fi
     if (( status != 0 )); then
       echo "Error: step $((i + 1)) ($name) failed" >&2
       cat "$log" >&2
       exit "$status"
+    fi
+    if [[ -n "$final" ]]; then
+      current="$final"
+      break
     fi
     # The work directory holds only the current image; the step's output is the one new file.
     made=""
@@ -204,9 +199,16 @@ stack() {
     current="$made"
   done
 
-  local dest
-  dest="$(dirname "$input")/$(basename "$current")"
-  cp "$current" "$dest"
+  local dest="${output:-$(dirname "$input")/$(basename "$current")}"
+  # Copy beside the destination, then rename over it, so a failed copy never leaves it half written.
+  local staged
+  staged="$(mktemp "$(dirname "$dest")/.op-stack.XXXXXX")"
+  # mktemp makes the file private; give it the permissions a plain write would.
+  if ! cp "$current" "$staged" || ! chmod "$(printf '%o' $((0666 & ~$(umask))))" "$staged" || ! mv -f "$staged" "$dest"; then
+    rm -f "$staged"
+    echo "Error: could not write $dest" >&2
+    exit 1
+  fi
   echo "Stacked $n patches → $dest" >&2
 }
 
