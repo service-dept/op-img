@@ -11,13 +11,14 @@ from PIL import Image, ImageColor
 NEUTRAL_CHROMA = 12.0  # a*b* distance below which a colour family counts as grey, black or white
 HUE_WIDTH = np.radians(22)  # how far in hue a family reaches (standard deviation)
 MERGE_HUE = np.radians(30)  # k-means centres closer than this in hue are one colour
+SHARE_WIDTH = np.radians(12)  # how sharply a pixel is shared between neighbouring families
 
 
 def to_lab(image: Image.Image) -> np.ndarray:
     """RGB image to float L, a, b arrays. Pillow stores a and b as signed bytes."""
     lab = np.array(image.convert("LAB"), dtype=np.int16)
     lab[:, :, 1:] = np.where(lab[:, :, 1:] > 127, lab[:, :, 1:] - 256, lab[:, :, 1:])
-    return lab.astype(np.float64)
+    return lab.astype(np.float32)
 
 
 def from_lab(lab: np.ndarray) -> Image.Image:
@@ -45,10 +46,24 @@ def colour_families(ab: np.ndarray, k: int, seed: int = 0) -> np.ndarray:
     return centres
 
 
+def wrap(angle):
+    """Wrap angles to [-pi, pi)."""
+    return (angle + np.pi) % (2 * np.pi) - np.pi
+
+
+def nearest_centre(ab: np.ndarray, centres: np.ndarray, chunk: int = 250_000) -> np.ndarray:
+    """Label each pixel with its nearest centre, a chunk at a time so large photos stay in memory."""
+    labels = np.empty(len(ab), dtype=np.int64)
+    for start in range(0, len(ab), chunk):
+        part = ab[start:start + chunk]
+        labels[start:start + chunk] = ((part[:, None, :] - centres[None]) ** 2).sum(-1).argmin(1)
+    return labels
+
+
 def rank_families(ab: np.ndarray, centres: np.ndarray) -> list[dict]:
     """Merge k-means centres of one hue (light and saturated orange are one colour), drop greys,
     and rank what is left by how many pixels it covers."""
-    labels = ((ab[:, None, :] - centres[None]) ** 2).sum(-1).argmin(1)
+    labels = nearest_centre(ab, centres)
     counts = np.bincount(labels, minlength=len(centres))
     groups = []
     for i in np.argsort(-counts):
@@ -75,7 +90,7 @@ def rank_families(ab: np.ndarray, centres: np.ndarray) -> list[dict]:
 def recolor(image: Image.Image, colours: list[tuple[int, int, int]], amount: float, clusters: int) -> Image.Image:
     if amount <= 0:
         return image.copy()
-    src = np.array(image, dtype=np.float64)
+    src = np.array(image, dtype=np.float32)
     lab = to_lab(image)
     h, w, _ = lab.shape
     L = lab[:, :, 0].reshape(-1)
@@ -86,17 +101,23 @@ def recolor(image: Image.Image, colours: list[tuple[int, int, int]], amount: flo
     targets = families[:len(colours)]
     if not targets:
         return image.copy()
-    # A pixel belongs to a family by how close its hue is, scaled by how colourful it is, so every
-    # shade of one colour moves together and near-greys barely move.
+    # A pixel belongs to a chosen family by how close its hue is, scaled by how colourful it is, so
+    # every shade of one colour moves together and near-greys barely move. Its share is weighed
+    # against every family found, chosen or not, so a neighbouring colour keeps its own pixels.
     colourful = np.clip((chroma - 4.0) / 16.0, 0.0, 1.0)
+
+    def closeness(fh: float, width: float) -> np.ndarray:
+        dh = wrap(hue - np.float32(fh))
+        return np.exp(-0.5 * (dh / width) ** 2)
+
+    everyone = np.zeros_like(hue)
+    for f in families:
+        everyone += closeness(f["hue"], SHARE_WIDTH)
     fam_hues = [f["hue"] for f in targets]
-    member = []
-    for fh in fam_hues:
-        dh = np.angle(np.exp(1j * (hue - fh)))
-        member.append(np.exp(-0.5 * (dh / HUE_WIDTH) ** 2) * colourful)
-    member = np.array(member)
-    total = member.sum(0)
-    member = np.where(total > 1, member / np.maximum(total, 1e-9), member)
+    member = np.array([
+        colourful * closeness(fh, HUE_WIDTH) * closeness(fh, SHARE_WIDTH) / np.maximum(everyone, 1e-12)
+        for fh in fam_hues
+    ])
     new_l, new_c, new_h = L.copy(), chroma.copy(), hue.copy()
     for m, fam, fh, colour in zip(member, targets, fam_hues, colours):
         t = to_lab(Image.new("RGB", (1, 1), colour))[0, 0]
@@ -107,7 +128,7 @@ def recolor(image: Image.Image, colours: list[tuple[int, int, int]], amount: flo
         new_c *= 1 + m * (tc / max(fc, 1e-6) - 1)
         new_h += m * np.angle(np.exp(1j * (th - fh)))
     new_lab = np.stack([new_l, new_c * np.cos(new_h), new_c * np.sin(new_h)], 1).reshape(h, w, 3)
-    out = np.array(from_lab(new_lab), dtype=np.float64)
+    out = np.array(from_lab(new_lab), dtype=np.float32)
     blend = (amount * np.clip(member.sum(0), 0, 1)).reshape(h, w, 1)
     result = src + blend * (out - src)
     return Image.fromarray(np.clip(np.rint(result), 0, 255).astype(np.uint8))

@@ -96,3 +96,18 @@ class TestRecolor:
     def test_no_args(self, run_tool):
         r = run_tool("recolor", "recolor.py", [])
         assert r.returncode != 0
+
+    def test_neighbouring_colour_is_left_alone(self, run_tool, tmp_path):
+        """A red 33 degrees of hue from the orange is its own family and keeps its colour."""
+        arr = np.zeros((64, 64, 3), dtype=np.uint8)
+        ramp = np.linspace(0.6, 1.0, 64)[:, None]
+        arr[:, :40] = (np.array([230, 120, 30])[None, None, :] * ramp[:, :, None]).astype(np.uint8)
+        arr[:, 40:] = (np.array([220, 40, 70])[None, None, :] * ramp[:, :, None]).astype(np.uint8)
+        img = str(tmp_path / "near.png")
+        Image.fromarray(arr).save(img)
+        out = str(tmp_path / "out.png")
+        r = run_tool("recolor", "recolor.py", [img, out, "--colors", "#1e3a8a"])
+        assert r.returncode == 0, r.stderr
+        assert _mean(out, slice(0, 36))[2] > _mean(out, slice(0, 36))[0], "the orange should turn blue"
+        change = np.abs(_mean(out, slice(44, 64)) - _mean(img, slice(44, 64))).max()
+        assert change < 8, f"the red changed by {change:.1f}"
