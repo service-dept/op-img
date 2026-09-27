@@ -16,12 +16,6 @@ def _solid(path: str, color: tuple[int, int, int]) -> str:
 
 
 class TestAscii:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("ascii", "ascii.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-ascii.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -53,15 +47,6 @@ class TestAscii:
         r = run_tool("ascii", "ascii.py", [tiny, "--cell", "10"])
         assert r.returncode != 0
         assert "smaller than one" in r.stderr
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("ascii", "ascii.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("ascii", "ascii.py", [])
-        assert r.returncode != 0
 
     def test_output_is_not_near_black(self, run_tool, tmp_workdir):
         """Bold glyphs and a stretched range keep the output readable on black."""

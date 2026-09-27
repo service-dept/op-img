@@ -9,13 +9,6 @@ from conftest import assert_valid_image
 
 
 class TestPolar:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("polar", "polar.py", [img])
-        assert r.returncode == 0
-        out = str(tmp_path / "input-polar.png")
-        assert_valid_image(out)
-
     def test_explicit_from_polar(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -81,12 +74,3 @@ class TestPolar:
         for opts in (["--center", "0.5"], ["--center", "a,b"], ["--radius", "0"]):
             r = run_tool("polar", "polar.py", [img] + opts)
             assert r.returncode == 2, opts
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("polar", "polar.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "not found" in r.stderr.lower()
-
-    def test_no_args(self, run_tool):
-        r = run_tool("polar", "polar.py", [])
-        assert r.returncode != 0

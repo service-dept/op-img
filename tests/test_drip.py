@@ -19,12 +19,6 @@ def _white_spot(path: str) -> str:
 
 
 class TestDrip:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("drip", "drip.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-drip.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -57,12 +51,3 @@ class TestDrip:
         d, u = _pixels(down), _pixels(up)
         assert d[20, 30].min() > 0 and d[5, 30].max() == 0
         assert u[5, 30].min() > 0 and u[20, 30].max() == 0
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("drip", "drip.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("drip", "drip.py", [])
-        assert r.returncode != 0

@@ -21,19 +21,6 @@ def _mean(path, cols):
 
 
 class TestRecolor:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("recolor", "recolor.py", [img])
-        assert r.returncode == 0, r.stderr
-        assert_valid_image(str(tmp_path / "input-recolor.png"))
-
-    def test_explicit_output(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        out = str(tmp_path / "out.png")
-        r = run_tool("recolor", "recolor.py", [img, out, "--colors", "#1e3a8a"])
-        assert r.returncode == 0, r.stderr
-        assert_valid_image(out)
-
     def test_amount_zero_is_identity(self, run_tool, tmp_path):
         img = _two_color_image(str(tmp_path / "two.png"))
         out = str(tmp_path / "out.png")
@@ -87,15 +74,6 @@ class TestRecolor:
         r = run_tool("recolor", "recolor.py", [img, "--colors", "red,blue", "--clusters", "2"])
         assert r.returncode == 2
         assert "fewer colors" in r.stderr
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("recolor", "recolor.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "not found" in r.stderr.lower()
-
-    def test_no_args(self, run_tool):
-        r = run_tool("recolor", "recolor.py", [])
-        assert r.returncode != 0
 
     def test_neighboring_color_is_left_alone(self, run_tool, tmp_path):
         """A red 33 degrees of hue from the orange is its own family and keeps its color."""

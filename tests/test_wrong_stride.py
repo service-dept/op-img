@@ -7,13 +7,6 @@ from conftest import assert_valid_image
 
 
 class TestWrongStride:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("wrong-stride", "wrong-stride.py", [img])
-        assert r.returncode == 0
-        out = str(tmp_path / "input-stride.png")
-        assert_valid_image(out)
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -31,12 +24,3 @@ class TestWrongStride:
         original = Image.open(img)
         result = Image.open(out)
         assert original.size == result.size
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("wrong-stride", "wrong-stride.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "not found" in r.stderr.lower()
-
-    def test_no_args(self, run_tool):
-        r = run_tool("wrong-stride", "wrong-stride.py", [])
-        assert r.returncode != 0

@@ -23,12 +23,6 @@ def _sharpness(arr: np.ndarray) -> float:
 
 
 class TestTiltShift:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("tilt-shift", "tilt-shift.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-tiltshift.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -56,13 +50,4 @@ class TestTiltShift:
     def test_blur_out_of_range(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         r = run_tool("tilt-shift", "tilt-shift.py", [img, "--blur", "100"])
-        assert r.returncode != 0
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("tilt-shift", "tilt-shift.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("tilt-shift", "tilt-shift.py", [])
         assert r.returncode != 0

@@ -12,4 +12,5 @@ testpaths = ["tests"]
 pythonpath = ["tests"]
 markers = [
     "imagemagick: tests requiring ImageMagick (magick CLI)",
+    "slow: the input-matrix checks; skip while iterating with -m \"not slow\"",
 ]

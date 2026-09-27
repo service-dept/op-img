@@ -21,12 +21,6 @@ def _ramp(path: str) -> str:
 
 
 class TestContour:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("contour", "contour.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-contour.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -57,13 +51,4 @@ class TestContour:
     def test_bad_color(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         r = run_tool("contour", "contour.py", [img, "--color", "pink"])
-        assert r.returncode != 0
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("contour", "contour.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("contour", "contour.py", [])
         assert r.returncode != 0

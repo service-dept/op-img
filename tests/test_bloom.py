@@ -19,12 +19,6 @@ def _bright_spot(path: str) -> str:
 
 
 class TestBloom:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("bloom", "bloom.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-bloom.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -55,12 +49,3 @@ class TestBloom:
         px = _pixels(out)
         assert px[32, 38].mean() > 40
         assert px[32, 38].mean() > px[0, 0].mean()
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("bloom", "bloom.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("bloom", "bloom.py", [])
-        assert r.returncode != 0

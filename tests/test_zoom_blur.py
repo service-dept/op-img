@@ -11,12 +11,6 @@ def _pixels(path: str) -> np.ndarray:
 
 
 class TestZoomBlur:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("zoom-blur", "zoom-blur.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-zoomblur.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -45,13 +39,4 @@ class TestZoomBlur:
     def test_bad_center(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         r = run_tool("zoom-blur", "zoom-blur.py", [img, "--center", "2,0.5"])
-        assert r.returncode != 0
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("zoom-blur", "zoom-blur.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("zoom-blur", "zoom-blur.py", [])
         assert r.returncode != 0

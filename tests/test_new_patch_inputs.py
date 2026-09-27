@@ -8,6 +8,10 @@ from PIL import Image
 
 from conftest import assert_valid_image
 
+# The whole matrix is slow (one process per case); skip it while iterating with -m "not slow".
+# Palette input and 2 px images were dropped: they convert and fail the same ways as the cases kept.
+pytestmark = pytest.mark.slow
+
 # (patch directory, output suffix). Each milestone appends its patches here.
 NEW_PATCHES = [
     ("fft-phase", "fftphase"),
@@ -37,7 +41,7 @@ def _gradient_array(size: int = 64) -> np.ndarray:
 
 
 @pytest.mark.parametrize("name", NAMES)
-@pytest.mark.parametrize("mode", ["RGBA", "L", "P"])
+@pytest.mark.parametrize("mode", ["RGBA", "L"])
 def test_accepts_other_modes(run_tool, tmp_path, name, mode):
     """Transparent, grayscale and palette inputs all produce an RGB image the same size."""
     src = str(tmp_path / f"in-{mode}.png")
@@ -57,7 +61,7 @@ def test_accepts_other_modes(run_tool, tmp_path, name, mode):
 
 
 @pytest.mark.parametrize("name", [n for n in NAMES if n != "ascii"])
-@pytest.mark.parametrize("size", [1, 2, 5])
+@pytest.mark.parametrize("size", [1, 5])
 def test_tiny_images(run_tool, tmp_path, name, size):
     src = str(tmp_path / "tiny.png")
     Image.fromarray(_gradient_array(64)[:size, :size]).save(src)

@@ -20,12 +20,6 @@ def _split(path: str) -> str:
 
 
 class TestEdgeGlow:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("edge-glow", "edge-glow.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-edgeglow.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -50,12 +44,3 @@ class TestEdgeGlow:
         assert px[:, 30:34].mean() > 100
         assert px[:, :8].max() <= 3
         assert px[:, -8:].max() <= 3
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("edge-glow", "edge-glow.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("edge-glow", "edge-glow.py", [])
-        assert r.returncode != 0

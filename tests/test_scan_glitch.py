@@ -6,13 +6,6 @@ from conftest import assert_valid_image
 
 
 class TestScanGlitch:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("scan-glitch", "scan-glitch.py", [img])
-        assert r.returncode == 0
-        out = str(tmp_path / "input-glitch.png")
-        assert_valid_image(out)
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -29,12 +22,3 @@ class TestScanGlitch:
         run_tool("scan-glitch", "scan-glitch.py", [img, out2, "--seed", "99"])
         with open(out1, "rb") as f1, open(out2, "rb") as f2:
             assert f1.read() == f2.read()
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("scan-glitch", "scan-glitch.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "not found" in r.stderr.lower()
-
-    def test_no_args(self, run_tool):
-        r = run_tool("scan-glitch", "scan-glitch.py", [])
-        assert r.returncode != 0

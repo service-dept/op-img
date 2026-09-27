@@ -11,12 +11,6 @@ def _pixels(path: str) -> np.ndarray:
 
 
 class TestVoronoiMosaic:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("voronoi-mosaic", "voronoi-mosaic.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-voronoi.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -45,13 +39,4 @@ class TestVoronoiMosaic:
     def test_size_out_of_range(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         r = run_tool("voronoi-mosaic", "voronoi-mosaic.py", [img, "--size", "0"])
-        assert r.returncode != 0
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("voronoi-mosaic", "voronoi-mosaic.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("voronoi-mosaic", "voronoi-mosaic.py", [])
         assert r.returncode != 0

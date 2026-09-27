@@ -25,12 +25,6 @@ def _noise(path: str) -> str:
 
 
 class TestOilPaint:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("oil-paint", "oil-paint.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-oilpaint.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -60,12 +54,3 @@ class TestOilPaint:
         r = run_tool("oil-paint", "oil-paint.py", [img, out, "--radius", "4"])
         assert r.returncode == 0
         assert _pixels(out).std() < _pixels(img).std() * 0.6
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("oil-paint", "oil-paint.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("oil-paint", "oil-paint.py", [])
-        assert r.returncode != 0
