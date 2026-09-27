@@ -10,12 +10,19 @@ op <patch> <input> [--args]
 
 ## Quick start
 
+Clone the repository:
+
+```bash
+git clone https://github.com/service-dept/op-img.git
+cd op-img
+```
+
 Install the requirements:
 
 - [ImageMagick](https://imagemagick.org/) for the shell patches: `brew install imagemagick`
 - [Python 3](https://www.python.org/) with Pillow, numpy and scipy for the Python patches: `pip3 install Pillow numpy scipy`
 
-Add `op` to your PATH (one-time setup from the repo root):
+Add `op` to your PATH (one-time setup, from the `op-img` folder):
 
 ```bash
 ln -s "$(pwd)/op" /usr/local/bin/op
