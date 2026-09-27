@@ -74,3 +74,10 @@ class TestPolar:
         for opts in (["--center", "0.5"], ["--center", "a,b"], ["--radius", "0"]):
             r = run_tool("polar", "polar.py", [img] + opts)
             assert r.returncode == 2, opts
+
+    def test_center_that_starts_with_a_minus(self, run_tool, tmp_workdir):
+        tmp_path, img = tmp_workdir
+        out = str(tmp_path / "out.png")
+        r = run_tool("polar", "polar.py", [img, out, "--center", "-0.2,0.5"])
+        assert r.returncode == 0, r.stderr
+        assert_valid_image(out)

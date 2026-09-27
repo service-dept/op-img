@@ -10,6 +10,20 @@ from PIL import Image
 from scipy.ndimage import map_coordinates
 
 
+def join_pair_values(argv: list[str], options: set[str]) -> list[str]:
+    """Pass each X,Y option as --opt=VALUE. Before Python 3.14, argparse reads a value that
+    starts with a minus, such as -120,-40, as another option rather than as the value."""
+    out, i = [], 0
+    while i < len(argv):
+        if argv[i] in options and i + 1 < len(argv):
+            out.append(f"{argv[i]}={argv[i + 1]}")
+            i += 2
+        else:
+            out.append(argv[i])
+            i += 1
+    return out
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Transform image between Cartesian and polar coordinates.")
     parser.add_argument("input", help="Input image path")
@@ -24,7 +38,7 @@ def main() -> None:
     parser.add_argument("--rotate", type=float, default=0.0, help="Angle offset in degrees (default: 0.0)")
     parser.add_argument("--radius", type=float, default=1.0,
                         help="Outer radius as a fraction of the distance to the farthest corner (default: 1.0)")
-    args = parser.parse_args()
+    args = parser.parse_args(join_pair_values(sys.argv[1:], {"--center"}))
     try:
         fx, fy = (float(v) for v in args.center.split(","))
     except ValueError:
