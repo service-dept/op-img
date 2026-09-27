@@ -1,11 +1,51 @@
+[build-system]
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
 [project]
 name = "op-img"
-version = "0.1.0"
-description = "Image processing CLI tools"
+description = "A composable image manipulation CLI"
 requires-python = ">=3.10"
+dependencies = ["Pillow>=10.1", "numpy", "scipy"]
+dynamic = ["version", "readme"]
+keywords = ["image", "glitch", "cli", "pixel-sort", "image-processing"]
+classifiers = [
+    "Environment :: Console",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Graphics",
+]
+
+[project.urls]
+Homepage = "https://github.com/service-dept/op-img"
+Repository = "https://github.com/service-dept/op-img"
+
+[project.scripts]
+op-img = "op_img.cli:main"
 
 [project.optional-dependencies]
-test = ["pytest>=7.0", "Pillow", "numpy"]
+test = ["pytest>=7.0"]
+
+[tool.hatch.version]
+path = "op_img/__init__.py"
+
+# The wheel carries the dispatcher and every patch's script, but not the example images.
+[tool.hatch.build.targets.wheel]
+include = ["op_img", "patches/*/*.py", "patches/*/*.sh", "patches/*/requirements.txt"]
+sources = { "patches" = "op_img/patches" }
+
+[tool.hatch.build.targets.sdist]
+include = ["op_img", "patches/*/*.py", "patches/*/*.sh", "patches/*/requirements.txt", "tests", "op-img", "README.md"]
+
+# PyPI can't resolve the README's relative image paths, so point them at GitHub.
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+path = "README.md"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\((patches|assets)/'
+replacement = '](https://raw.githubusercontent.com/service-dept/op-img/main/\1/'
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

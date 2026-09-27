@@ -8,7 +8,7 @@ import pytest
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OP = os.path.join(ROOT, "op")
+OP = os.path.join(ROOT, "op-img")
 
 
 
