@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Repaint an image's most prevalent colours with the colours you give, keeping their light and shade."""
+"""Repaint an image's most prevalent colors with the colors you give, keeping their light and shade."""
 
 import argparse
 import os
@@ -8,10 +8,10 @@ import sys
 import numpy as np
 from PIL import Image, ImageColor
 
-NEUTRAL_CHROMA = 12.0  # a*b* distance below which a colour family counts as grey, black or white
+NEUTRAL_CHROMA = 12.0  # a*b* distance below which a color family counts as gray, black or white
 HUE_WIDTH = np.radians(22)  # how far in hue a family reaches (standard deviation)
-MERGE_HUE = np.radians(30)  # k-means centres closer than this in hue are one colour
-SHARE_WIDTH = np.radians(12)  # how sharply a pixel is shared between neighbouring families
+MERGE_HUE = np.radians(30)  # k-means centers closer than this in hue are one color
+SHARE_WIDTH = np.radians(12)  # how sharply a pixel is shared between neighboring families
 
 
 def to_lab(image: Image.Image) -> np.ndarray:
@@ -29,21 +29,21 @@ def from_lab(lab: np.ndarray) -> Image.Image:
     return Image.fromarray(out.astype(np.uint8), "LAB").convert("RGB")
 
 
-def colour_families(ab: np.ndarray, k: int, seed: int = 0) -> np.ndarray:
-    """k-means on a*b* (chroma only, so light and shadow of one colour stay together). Returns k centres."""
+def color_families(ab: np.ndarray, k: int, seed: int = 0) -> np.ndarray:
+    """k-means on a*b* (chroma only, so light and shadow of one color stay together). Returns k centers."""
     rng = np.random.default_rng(seed)
     sample = ab[rng.choice(len(ab), size=min(len(ab), 20000), replace=False)]
-    centres = [sample[rng.integers(len(sample))]]
+    centers = [sample[rng.integers(len(sample))]]
     for _ in range(1, k):
-        d = np.min(((sample[:, None, :] - np.array(centres)[None]) ** 2).sum(-1), axis=1)
+        d = np.min(((sample[:, None, :] - np.array(centers)[None]) ** 2).sum(-1), axis=1)
         if d.sum() == 0:
             break
-        centres.append(sample[rng.choice(len(sample), p=d / d.sum())])
-    centres = np.array(centres)
+        centers.append(sample[rng.choice(len(sample), p=d / d.sum())])
+    centers = np.array(centers)
     for _ in range(20):
-        labels = ((sample[:, None, :] - centres[None]) ** 2).sum(-1).argmin(1)
-        centres = np.array([sample[labels == i].mean(0) if np.any(labels == i) else centres[i] for i in range(len(centres))])
-    return centres
+        labels = ((sample[:, None, :] - centers[None]) ** 2).sum(-1).argmin(1)
+        centers = np.array([sample[labels == i].mean(0) if np.any(labels == i) else centers[i] for i in range(len(centers))])
+    return centers
 
 
 def wrap(angle):
@@ -51,26 +51,26 @@ def wrap(angle):
     return (angle + np.pi) % (2 * np.pi) - np.pi
 
 
-def nearest_centre(ab: np.ndarray, centres: np.ndarray, chunk: int = 250_000) -> np.ndarray:
-    """Label each pixel with its nearest centre, a chunk at a time so large photos stay in memory."""
+def nearest_center(ab: np.ndarray, centers: np.ndarray, chunk: int = 250_000) -> np.ndarray:
+    """Label each pixel with its nearest center, a chunk at a time so large photos stay in memory."""
     labels = np.empty(len(ab), dtype=np.int64)
     for start in range(0, len(ab), chunk):
         part = ab[start:start + chunk]
-        labels[start:start + chunk] = ((part[:, None, :] - centres[None]) ** 2).sum(-1).argmin(1)
+        labels[start:start + chunk] = ((part[:, None, :] - centers[None]) ** 2).sum(-1).argmin(1)
     return labels
 
 
-def rank_families(ab: np.ndarray, centres: np.ndarray) -> list[dict]:
-    """Merge k-means centres of one hue (light and saturated orange are one colour), drop greys,
+def rank_families(ab: np.ndarray, centers: np.ndarray) -> list[dict]:
+    """Merge k-means centers of one hue (light and saturated orange are one color), drop grays,
     and rank what is left by how many pixels it covers."""
-    labels = nearest_centre(ab, centres)
-    counts = np.bincount(labels, minlength=len(centres))
+    labels = nearest_center(ab, centers)
+    counts = np.bincount(labels, minlength=len(centers))
     groups = []
     for i in np.argsort(-counts):
-        chroma = float(np.hypot(*centres[i]))
+        chroma = float(np.hypot(*centers[i]))
         if counts[i] == 0 or chroma < NEUTRAL_CHROMA:
             continue
-        hue = float(np.arctan2(centres[i][1], centres[i][0]))
+        hue = float(np.arctan2(centers[i][1], centers[i][0]))
         for g in groups:
             if abs(np.angle(np.exp(1j * (hue - g["hue"])))) < MERGE_HUE:
                 g["members"].append(i)
@@ -87,7 +87,7 @@ def rank_families(ab: np.ndarray, centres: np.ndarray) -> list[dict]:
     return sorted(groups, key=lambda g: -g["count"])
 
 
-def recolor(image: Image.Image, colours: list[tuple[int, int, int]], amount: float, clusters: int) -> Image.Image:
+def recolor(image: Image.Image, colors: list[tuple[int, int, int]], amount: float, clusters: int) -> Image.Image:
     if amount <= 0:
         return image.copy()
     src = np.array(image, dtype=np.float32)
@@ -97,14 +97,14 @@ def recolor(image: Image.Image, colours: list[tuple[int, int, int]], amount: flo
     ab = lab[:, :, 1:].reshape(-1, 2)
     chroma = np.hypot(ab[:, 0], ab[:, 1])
     hue = np.arctan2(ab[:, 1], ab[:, 0])
-    families = rank_families(ab, colour_families(ab, clusters))
-    targets = families[:len(colours)]
+    families = rank_families(ab, color_families(ab, clusters))
+    targets = families[:len(colors)]
     if not targets:
         return image.copy()
-    # A pixel belongs to a chosen family by how close its hue is, scaled by how colourful it is, so
-    # every shade of one colour moves together and near-greys barely move. Its share is weighed
-    # against every family found, chosen or not, so a neighbouring colour keeps its own pixels.
-    colourful = np.clip((chroma - 4.0) / 16.0, 0.0, 1.0)
+    # A pixel belongs to a chosen family by how close its hue is, scaled by how colorful it is, so
+    # every shade of one color moves together and near-grays barely move. Its share is weighed
+    # against every family found, chosen or not, so a neighboring color keeps its own pixels.
+    colorful = np.clip((chroma - 4.0) / 16.0, 0.0, 1.0)
 
     def closeness(fh: float, width: float) -> np.ndarray:
         dh = wrap(hue - np.float32(fh))
@@ -115,12 +115,12 @@ def recolor(image: Image.Image, colours: list[tuple[int, int, int]], amount: flo
         everyone += closeness(f["hue"], SHARE_WIDTH)
     fam_hues = [f["hue"] for f in targets]
     member = np.array([
-        colourful * closeness(fh, HUE_WIDTH) * closeness(fh, SHARE_WIDTH) / np.maximum(everyone, 1e-12)
+        colorful * closeness(fh, HUE_WIDTH) * closeness(fh, SHARE_WIDTH) / np.maximum(everyone, 1e-12)
         for fh in fam_hues
     ])
     new_l, new_c, new_h = L.copy(), chroma.copy(), hue.copy()
-    for m, fam, fh, colour in zip(member, targets, fam_hues, colours):
-        t = to_lab(Image.new("RGB", (1, 1), colour))[0, 0]
+    for m, fam, fh, color in zip(member, targets, fam_hues, colors):
+        t = to_lab(Image.new("RGB", (1, 1), color))[0, 0]
         th, tc = np.arctan2(t[2], t[1]), np.hypot(t[1], t[2])
         fl, fc = L[fam["pixels"]].mean(), fam["chroma"]
         # Keep each pixel's light and shade relative to its family; move hue and chroma to the target.
@@ -134,27 +134,27 @@ def recolor(image: Image.Image, colours: list[tuple[int, int, int]], amount: flo
     return Image.fromarray(np.clip(np.rint(result), 0, 255).astype(np.uint8))
 
 
-def parse_colours(value: str) -> list[tuple[int, int, int]]:
-    colours = []
+def parse_colors(value: str) -> list[tuple[int, int, int]]:
+    colors = []
     for part in value.split(","):
         part = part.strip()
         try:
-            colours.append(ImageColor.getrgb(part)[:3])
+            colors.append(ImageColor.getrgb(part)[:3])
         except ValueError:
-            raise argparse.ArgumentTypeError(f"not a colour: '{part}' (use hex like #ec4899 or a name like pink)")
-    if not colours:
-        raise argparse.ArgumentTypeError("give at least one colour")
-    return colours
+            raise argparse.ArgumentTypeError(f"not a color: '{part}' (use hex like #ec4899 or a name like pink)")
+    if not colors:
+        raise argparse.ArgumentTypeError("give at least one color")
+    return colors
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Repaint the most prevalent colours with the colours you give.")
+    parser = argparse.ArgumentParser(description="Repaint the most prevalent colors with the colors you give.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
-    parser.add_argument("--colors", type=parse_colours, default=parse_colours("#ec4899"),
-                        help="Comma-separated colours, most prevalent first, e.g. '#ec4899,#1e3a8a' (default: #ec4899)")
+    parser.add_argument("--colors", type=parse_colors, default=parse_colors("#1e3a8a,#facc15"),
+                        help="Comma-separated colors, most prevalent first, (default: #1e3a8a,#facc15)")
     parser.add_argument("--amount", type=float, default=1.0, help="Strength, 0 (original) to 1 (full swap) (default: 1.0)")
-    parser.add_argument("--clusters", type=int, default=6, help="Colour families to find, 2 to 16 (default: 6)")
+    parser.add_argument("--clusters", type=int, default=6, help="Color families to find, 2 to 16 (default: 6)")
     args = parser.parse_args()
 
     if not os.path.isfile(args.input):
@@ -165,7 +165,7 @@ def main() -> None:
     if not 2 <= args.clusters <= 16:
         parser.error("--clusters must be between 2 and 16")
     if len(args.colors) >= args.clusters:
-        parser.error("give fewer colours than --clusters")
+        parser.error("give fewer colors than --clusters")
 
     img = Image.open(args.input).convert("RGB")
     result = recolor(img, args.colors, args.amount, args.clusters)

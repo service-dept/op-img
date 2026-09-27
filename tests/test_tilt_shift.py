@@ -11,10 +11,10 @@ def _pixels(path: str) -> np.ndarray:
 
 
 def _checker(path: str) -> str:
-    """Grey checkerboard of 2-pixel squares; grey is unaffected by the saturation lift."""
+    """Gray checkerboard of 2-pixel squares; gray is unaffected by the saturation lift."""
     yy, xx = np.mgrid[0:64, 0:64]
-    grey = np.where(((yy // 2) + (xx // 2)) % 2 == 0, 200, 50).astype(np.uint8)
-    Image.fromarray(np.repeat(grey[:, :, None], 3, axis=2)).save(path)
+    gray = np.where(((yy // 2) + (xx // 2)) % 2 == 0, 200, 50).astype(np.uint8)
+    Image.fromarray(np.repeat(gray[:, :, None], 3, axis=2)).save(path)
     return path
 
 

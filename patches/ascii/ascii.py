@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 def glyph_masks(charset: str, cell: int) -> np.ndarray:
-    """One cell-by-cell coverage mask (0 to 1) per character, centred in its cell."""
+    """One cell-by-cell coverage mask (0 to 1) per character, centered in its cell."""
     font = ImageFont.load_default(size=cell)
     masks = []
     for ch in charset:
@@ -21,7 +21,7 @@ def glyph_masks(charset: str, cell: int) -> np.ndarray:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Render the image as coloured ASCII characters.")
+    parser = argparse.ArgumentParser(description="Render the image as colored ASCII characters.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--cell", type=int, default=10, help="Character cell size in pixels, 6 to 32 (default: 10)")
@@ -57,10 +57,10 @@ def main() -> None:
     coverage = masks[idx].transpose(0, 2, 1, 3).reshape(rows * args.cell, cols * args.cell)
     # The glyph already carries the brightness, so draw it in the cell's hue at full brightness.
     hue = small * 255.0 / np.maximum(small.max(axis=2, keepdims=True), 1.0)
-    colour = np.repeat(np.repeat(hue, args.cell, axis=0), args.cell, axis=1)
+    color = np.repeat(np.repeat(hue, args.cell, axis=0), args.cell, axis=1)
 
     result = np.zeros((h, w, 3))
-    result[:rows * args.cell, :cols * args.cell] = colour * coverage[:, :, None]
+    result[:rows * args.cell, :cols * args.cell] = color * coverage[:, :, None]
     result_img = Image.fromarray(np.clip(np.rint(result), 0, 255).astype(np.uint8))
 
     if args.output:

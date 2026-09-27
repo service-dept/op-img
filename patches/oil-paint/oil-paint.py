@@ -46,13 +46,13 @@ def main() -> None:
         result = arr
     else:
         lum = arr @ np.array([0.299, 0.587, 0.114])
-        colour_table = integral(np.pad(arr, ((r, r), (r, r), (0, 0)), mode="edge"))
+        color_table = integral(np.pad(arr, ((r, r), (r, r), (0, 0)), mode="edge"))
         lum_table = integral(np.pad(lum, r, mode="edge"))
         sq_table = integral(np.pad(lum ** 2, r, mode="edge"))
 
         # The four quadrants that share the pixel as a corner: pick the one with the least variance.
         quadrants = [(-r, -r), (-r, 0), (0, -r), (0, 0)]
-        means = np.stack([window_mean(colour_table, h, w, r, oy, ox) for oy, ox in quadrants])
+        means = np.stack([window_mean(color_table, h, w, r, oy, ox) for oy, ox in quadrants])
         variances = np.stack([
             window_mean(sq_table, h, w, r, oy, ox) - window_mean(lum_table, h, w, r, oy, ox) ** 2
             for oy, ox in quadrants

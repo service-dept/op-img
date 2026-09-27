@@ -4,7 +4,7 @@
 # Usage: ./bit-crush.sh <input> [output] [--bits N]
 #   input  - Source image (GIF, PNG, JPG, etc.)
 #   output - Output PNG path (default: <input>-crush-Nbit.png)
-#   --bits  - Bit depth per channel (default: 3)
+#   --bits  - Bit depth per channel (default: 1)
 #
 # Example:
 #   ./bit-crush.sh ~/Desktop/photo.png
@@ -12,7 +12,7 @@
 
 set -euo pipefail
 
-BITS=3
+BITS=1
 INPUT=""
 OUTPUT=""
 

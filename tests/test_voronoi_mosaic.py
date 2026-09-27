@@ -33,14 +33,14 @@ class TestVoronoiMosaic:
         assert r.returncode == 0
         assert np.abs(_pixels(out) - _pixels(img)).max() <= 1
 
-    def test_one_colour_per_cell(self, run_tool, tmp_workdir):
-        """16-pixel cells on a 64x64 image give 16 seeds, so at most 16 colours."""
+    def test_one_color_per_cell(self, run_tool, tmp_workdir):
+        """16-pixel cells on a 64x64 image give 16 seeds, so at most 16 colors."""
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "cells.png")
         r = run_tool("voronoi-mosaic", "voronoi-mosaic.py", [img, out, "--size", "16", "--seed", "1"])
         assert r.returncode == 0
-        colours = {tuple(p) for p in _pixels(out).reshape(-1, 3)}
-        assert 2 <= len(colours) <= 16
+        colors = {tuple(p) for p in _pixels(out).reshape(-1, 3)}
+        assert 2 <= len(colors) <= 16
 
     def test_size_out_of_range(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir

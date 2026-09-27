@@ -34,8 +34,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Drip bright pixels like running paint.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
-    parser.add_argument("--length", type=float, default=120.0, help="Tail length in pixels; 0 leaves the image unchanged (default: 120.0)")
-    parser.add_argument("--threshold", type=int, default=180, help="Brightness above which pixels drip, 0 to 255 (default: 180)")
+    parser.add_argument("--length", type=float, default=500.0, help="Tail length in pixels; 0 leaves the image unchanged (default: 500.0)")
+    parser.add_argument("--threshold", type=int, default=120, help="Brightness above which pixels drip, 0 to 255 (default: 120)")
     parser.add_argument("--direction", choices=["down", "up", "left", "right"], default="down", help="Drip direction (default: down)")
     args = parser.parse_args()
 

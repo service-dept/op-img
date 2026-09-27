@@ -47,7 +47,7 @@ class TestOilPaint:
         assert np.array_equal(_pixels(out), _pixels(img))
 
     def test_keeps_hard_edges(self, run_tool, tmp_path):
-        """A sharp two-colour boundary survives unchanged."""
+        """A sharp two-color boundary survives unchanged."""
         img = _split(str(tmp_path / "split.png"))
         out = str(tmp_path / "paint.png")
         r = run_tool("oil-paint", "oil-paint.py", [img, out, "--radius", "5"])

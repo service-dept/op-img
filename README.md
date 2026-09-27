@@ -1,16 +1,19 @@
 # op-img
 
-![The McLaren photo cycling through seam-carve, channel-swap, polar, pixel-sort, invert-lightness, wrong-stride and fold, each layered over the last](_output/op-img-hero.avif)
+![The McLaren photo cycling through seam-carve, channel-swap, polar, pixel-sort, invert-lightness, wrong-stride and fold, each layered over the last](assets/op-img-hero.avif)
 
-op-img is a composable image manipulation CLI. Each patch does one thing to a photo: it sorts the pixels, wraps the frame into polar space, maps it to heat colours, rots it through JPEG. Every patch takes the same arguments, so any one can feed the next:
+op-img is a composable image manipulation CLI. Each patch does one thing to a photo: it sorts the pixels, wraps the frame into polar space, recolors it programmatically, and destroys it ritualistically.
 
 ```bash
-op pixel-sort photo.jpg + fold + polar
+op <patch> <input> [--args]
 ```
 
-Every patch follows `op <patch> <input> [output] [options]`. Leave out the output and the result is saved next to the input with a descriptive suffix.
-
 ## Quick start
+
+Install the requirements:
+
+- [ImageMagick](https://imagemagick.org/) for the shell patches: `brew install imagemagick`
+- [Python 3](https://www.python.org/) with Pillow, numpy and scipy for the Python patches: `pip3 install Pillow numpy scipy`
 
 Add `op` to your PATH (one-time setup from the repo root):
 
@@ -25,11 +28,12 @@ op <patch> <input> [--args]
 ```
 
 ```bash
-op bit-crush photo.jpg                      # default 3-bit crush
+op bit-crush photo.jpg                                   # default 1-bit crush
+op pixel-sort photo.jpg                                  # no output given: saves photo-psort.jpg next to photo.jpg
 op dot-halftone photo.jpg out.png --spacing 8
 op closest-palette photo.jpg --palette "#000,#fff,#f00"
-op                                           # list all tools
-op pixel-sort photo.jpg + fold + polar         # stack patches with +
+op                                                       # show usage and three patches at random
+op pixel-sort photo.jpg + fold + polar                   # stack patches with +
 ```
 
 ## Stacking patches
@@ -46,77 +50,107 @@ op pixel-sort photo.jpg --by hue + channel-swap   # options follow the patch the
 op seam-carve photo.jpg out.jpg + thermal         # an output after the input names the final file
 ```
 
-The input, and the output if you give one, come right after the first patch; every later step takes only options. Without an output, the result is saved next to the input with each patch's suffix in order, the same name a chain of single `op` calls would produce. Intermediate images live in a temporary directory that is removed afterwards. If a step fails, `op` names it, shows its error, and writes nothing.
+The input, and the output if you give one, come right after the first patch. Subsequent patches only take arguments. Omit the output path to save the result in the same directory as the input, with each patch's suffix applied in order.
 
-### What makes a good stack
+```bash
+op contour photo.jpg + swirl
+```
 
-- **Order matters.** Each patch works on what the one before it made, so swapping two patches usually gives a different picture. `op invert-lightness photo.jpg + thermal` turns the car cold and the tyres white-hot; `op thermal photo.jpg + invert-lightness` turns it magenta and pink.
-- **Wrap a patch in polar.** `op polar photo.jpg + pixel-sort + polar --mode from-polar` sorts the unwrapped image, so the sort's rows come back as rings and rays around the pole. Give both polar steps the same `--center`, `--rotate` and `--radius`, and change those to move the vortex.
-- **Mix families.** A geometry patch followed by a colour patch, or a glitch followed by a blur, usually beats two patches from the same family, which tend to read as one.
-- **Push the options.** Defaults are tuned to look good on their own. Inside a stack a stronger setting often reads better, such as `drip --length 500 --threshold 120`.
-- **Draw last.** dot-halftone, line-halftone, cross-hatch and stipple write a transparent background, which turns black when a later patch reads it, so put them at the end.
+![op contour photo.jpg + swirl](patches/contour/stack-contour-swirl.jpg)
 
-### Twenty stacks
+```bash
+op fold photo.jpg + polar --center 0.3,0.5 --rotate 200 --radius 0.9 + pixel-sort + channel-swap
+```
 
-Twenty stacks on the same photo, in no particular order. Copy any command and swap in your own image.
+![op fold photo.jpg + polar --center 0.3,0.5 --rotate 200 --radius 0.9 + pixel-sort + channel-swap](patches/fold/stack-fold-polar-pixel-sort-channel-swap.jpg)
 
-<table>
-<tr>
-<td width="50%"><img src="_output/stacks/stack-01.jpg" alt="op contour photo.jpg + swirl"><br><code>op contour photo.jpg + swirl</code></td>
-<td width="50%"><img src="_output/stacks/stack-02.jpg" alt="op fold photo.jpg + polar --center 0.3,0.5 --rotate 200 --radius 0.9 + pixel-sort + channel-swap"><br><code>op fold photo.jpg + polar --center 0.3,0.5 --rotate 200 --radius 0.9 + pixel-sort + channel-swap</code></td>
-</tr>
-<tr>
-<td width="50%"><img src="_output/stacks/stack-03.jpg" alt="op pixel-sort photo.jpg + fold + polar --center 0.5,0.85 --rotate 90 + swirl --angle 180"><br><code>op pixel-sort photo.jpg + fold + polar --center 0.5,0.85 --rotate 90 + swirl --angle 180</code></td>
-<td width="50%"><img src="_output/stacks/stack-04.jpg" alt="op thermal photo.jpg + invert-lightness"><br><code>op thermal photo.jpg + invert-lightness</code></td>
-</tr>
-<tr>
-<td width="50%"><img src="_output/stacks/stack-05.jpg" alt="op fft-phase photo.jpg + kaleidoscope --segments 10 --angle 0"><br><code>op fft-phase photo.jpg + kaleidoscope --segments 10 --angle 0</code></td>
-<td width="50%"><img src="_output/stacks/stack-06.jpg" alt="op invert-lightness photo.jpg + thermal"><br><code>op invert-lightness photo.jpg + thermal</code></td>
-</tr>
-<tr>
-<td width="50%"><img src="_output/stacks/stack-07.jpg" alt="op tile-shuffle photo.jpg --grid 8 + pixel-sort --by hue"><br><code>op tile-shuffle photo.jpg --grid 8 + pixel-sort --by hue</code></td>
-<td width="50%"><img src="_output/stacks/stack-08.jpg" alt="op slit-scan photo.jpg + thermal"><br><code>op slit-scan photo.jpg + thermal</code></td>
-</tr>
-<tr>
-<td width="50%"><img src="_output/stacks/stack-09.jpg" alt="op polar photo.jpg --center 0.62,0.4 --rotate 150 --radius 0.85 + drip --length 500 --threshold 120 + polar --mode from-polar --center 0.62,0.4 --rotate 150 --radius 0.85"><br><code>op polar photo.jpg --center 0.62,0.4 --rotate 150 --radius 0.85 + drip --length 500 --threshold 120 + polar --mode from-polar --center 0.62,0.4 --rotate 150 --radius 0.85</code></td>
-<td width="50%"><img src="_output/stacks/stack-10.jpg" alt="op polar photo.jpg + tile-shuffle --grid 8 + polar --mode from-polar"><br><code>op polar photo.jpg + tile-shuffle --grid 8 + polar --mode from-polar</code></td>
-</tr>
-<tr>
-<td width="50%"><img src="_output/stacks/stack-11.jpg" alt="op dither photo.jpg --method atkinson + zoom-blur"><br><code>op dither photo.jpg --method atkinson + zoom-blur</code></td>
-<td width="50%"><img src="_output/stacks/stack-12.jpg" alt="op polar photo.jpg + pixel-sort + polar --mode from-polar + channel-swap --map G,R,B"><br><code>op polar photo.jpg + pixel-sort + polar --mode from-polar + channel-swap --map G,R,B</code></td>
-</tr>
-<tr>
-<td width="50%"><img src="_output/stacks/stack-13.jpg" alt="op kaleidoscope photo.jpg + ascii"><br><code>op kaleidoscope photo.jpg + ascii</code></td>
-<td width="50%"><img src="_output/stacks/stack-14.jpg" alt="op scan-glitch photo.jpg + polar --center 0.72,0.3 --rotate 105 --radius 0.7"><br><code>op scan-glitch photo.jpg + polar --center 0.72,0.3 --rotate 105 --radius 0.7</code></td>
-</tr>
-<tr>
-<td width="50%"><img src="_output/stacks/stack-15.jpg" alt="op swirl photo.jpg + kaleidoscope"><br><code>op swirl photo.jpg + kaleidoscope</code></td>
-<td width="50%"><img src="_output/stacks/stack-16.jpg" alt="op res-crush photo.jpg --size 32 + zoom-blur"><br><code>op res-crush photo.jpg --size 32 + zoom-blur</code></td>
-</tr>
-<tr>
-<td width="50%"><img src="_output/stacks/stack-17.jpg" alt="op bit-crush photo.jpg --bits 1 + flow-streak"><br><code>op bit-crush photo.jpg --bits 1 + flow-streak</code></td>
-<td width="50%"><img src="_output/stacks/stack-18.jpg" alt="op channel-offset photo.jpg --r 140,50 --g -20,40 --b -120,-40 + swirl"><br><code>op channel-offset photo.jpg --r 140,50 --g -20,40 --b -120,-40 + swirl</code></td>
-</tr>
-<tr>
-<td width="50%"><img src="_output/stacks/stack-19.jpg" alt="op contour photo.jpg --levels 24 + zoom-blur --amount 0.5 + bloom"><br><code>op contour photo.jpg --levels 24 + zoom-blur --amount 0.5 + bloom</code></td>
-<td width="50%"><img src="_output/stacks/stack-20.jpg" alt="op pixel-sort photo.jpg --direction column + drip --length 500 --threshold 120 --direction up + invert-lightness"><br><code>op pixel-sort photo.jpg --direction column + drip --length 500 --threshold 120 --direction up + invert-lightness</code></td>
-</tr>
-</table>
+```bash
+op thermal photo.jpg + invert-lightness
+```
+
+![op thermal photo.jpg + invert-lightness](patches/thermal/stack-thermal-invert-lightness.jpg)
+
+```bash
+op invert-lightness photo.jpg + thermal
+```
+
+![op invert-lightness photo.jpg + thermal](patches/invert-lightness/stack-invert-lightness-thermal.jpg)
+
+```bash
+op slit-scan photo.jpg + thermal
+```
+
+![op slit-scan photo.jpg + thermal](patches/slit-scan/stack-slit-scan-thermal.jpg)
+
+```bash
+op polar photo.jpg --center 0.62,0.4 --rotate 150 --radius 0.85 + drip --length 500 --threshold 120 + polar --mode from-polar --center 0.62,0.4 --rotate 150 --radius 0.85
+```
+
+![op polar photo.jpg --center 0.62,0.4 --rotate 150 --radius 0.85 + drip --length 500 --threshold 120 + polar --mode from-polar --center 0.62,0.4 --rotate 150 --radius 0.85](patches/polar/stack-polar-drip-polar.jpg)
+
+```bash
+op polar photo.jpg + tile-shuffle --grid 8 + polar --mode from-polar
+```
+
+![op polar photo.jpg + tile-shuffle --grid 8 + polar --mode from-polar](patches/polar/stack-polar-tile-shuffle-polar.jpg)
+
+```bash
+op dither photo.jpg --method atkinson + zoom-blur
+```
+
+![op dither photo.jpg --method atkinson + zoom-blur](patches/dither/stack-dither-zoom-blur.jpg)
+
+```bash
+op kaleidoscope photo.jpg + ascii
+```
+
+![op kaleidoscope photo.jpg + ascii](patches/kaleidoscope/stack-kaleidoscope-ascii.jpg)
+
+```bash
+op scan-glitch photo.jpg + polar --center 0.72,0.3 --rotate 105 --radius 0.7
+```
+
+![op scan-glitch photo.jpg + polar --center 0.72,0.3 --rotate 105 --radius 0.7](patches/scan-glitch/stack-scan-glitch-polar.jpg)
+
+```bash
+op swirl photo.jpg + kaleidoscope
+```
+
+![op swirl photo.jpg + kaleidoscope](patches/swirl/stack-swirl-kaleidoscope.jpg)
+
+```bash
+op res-crush photo.jpg --size 32 + zoom-blur
+```
+
+![op res-crush photo.jpg --size 32 + zoom-blur](patches/res-crush/stack-res-crush-zoom-blur.jpg)
+
+```bash
+op bit-crush photo.jpg --bits 1 + flow-streak
+```
+
+![op bit-crush photo.jpg --bits 1 + flow-streak](patches/bit-crush/stack-bit-crush-flow-streak.jpg)
+
+```bash
+op channel-offset photo.jpg --r 140,50 --g -20,40 --b -120,-40 + swirl
+```
+
+![op channel-offset photo.jpg --r 140,50 --g -20,40 --b -120,-40 + swirl](patches/channel-offset/stack-channel-offset-swirl.jpg)
+
+```bash
+op pixel-sort photo.jpg --direction column + drip --length 500 --threshold 120 --direction up + invert-lightness
+```
+
+![op pixel-sort photo.jpg --direction column + drip --length 500 --threshold 120 --direction up + invert-lightness](patches/pixel-sort/stack-pixel-sort-drip-invert-lightness.jpg)
 
 ## Adding a patch
 
-A patch is a directory under `patches/` named after it, holding `<name>.py` with a `requirements.txt`, or `<name>.sh`. `op` finds it by name, so there is nothing to register. Follow the other patches: an optional output, a descriptive suffix when it is left out, and `Error: file not found` for a missing input. Add its tests in `tests/test_<name>.py` and its name to `ALL_PATCHES` in `tests/test_op_cli.py`.
+A patch is a directory in `patches/`, named after the patch. It holds either a Python script with its `requirements.txt`, or a shell script. `op` finds patches by name, so there's nothing to register. The input comes first, then an optional output. Omit the output to save the result next to the input with the patch's suffix. A missing input prints `Error: file not found`. Tests go in `tests/test_<name>.py`, and the name goes in `ALL_PATCHES` in `tests/test_op_cli.py`. Write in US spelling: color, gray, center.
 
-## Requirements
-
-- [ImageMagick](https://imagemagick.org/) for shell scripts: `brew install imagemagick`
-- [Python 3](https://www.python.org/) with Pillow, numpy and scipy for Python scripts: `pip3 install Pillow numpy scipy`
-
-## Tools
+## Patches
 
 All examples below use this image as input:
 
-![default input](_output/mclaren.jpg)
+![default input](assets/mclaren.jpg)
 
 ### bit-crush
 
@@ -126,11 +160,9 @@ Reduce color depth by posterizing to N bits per channel.
 ./patches/bit-crush/bit-crush.sh <input> [output] [--bits N]
 ```
 
-Default: `--bits 3` (8 color levels — 512 total colors)
+Default: `--bits 1` (2 levels per channel, 8 colors)
 
-Example: `--bits 1`
-
-![bit-crush example](_output/mclaren-crush-1bit.jpg)
+![bit-crush example](patches/bit-crush/example.jpg)
 
 ### res-crush
 
@@ -142,7 +174,7 @@ Downscale to a tiny resolution and upscale back with nearest-neighbor for a chun
 
 Default: `--size 64`
 
-![res-crush example](_output/mclaren-pixelate-64.jpg)
+![res-crush example](patches/res-crush/example.jpg)
 
 ### channel-offset
 
@@ -152,11 +184,9 @@ Shift R, G, B channels by independent pixel amounts for a misregistered print / 
 ./patches/channel-offset/channel-offset.sh <input> [output] [--r X,Y] [--g X,Y] [--b X,Y]
 ```
 
-Default: `--r 30,15 --b -25,-10`
+Default: `--r 140,50 --g -20,40 --b -120,-40`
 
-Example: `--r 140,50 --g -20,40 --b -120,-40`
-
-![channel-offset example](_output/mclaren-offset.jpg)
+![channel-offset example](patches/channel-offset/example.jpg)
 
 ### fold
 
@@ -166,7 +196,7 @@ Mirror or repeat one half of the image across a fold line.
 ./patches/fold/fold.sh <input> [output] [--axis x|y] [--position N] [--mode mirror|repeat]
 ```
 
-![fold example](_output/mclaren-fold.jpg)
+![fold example](patches/fold/example.jpg)
 
 ### pixel-sort
 
@@ -178,7 +208,7 @@ python3 ./patches/pixel-sort/pixel-sort.py <input> [output] [--by brightness|hue
 
 Default: `--threshold 200`
 
-![pixel-sort example](_output/mclaren-psort.jpg)
+![pixel-sort example](patches/pixel-sort/example.jpg)
 
 ### scan-glitch
 
@@ -188,7 +218,7 @@ Randomly shift horizontal slices of the image for a broken-signal effect.
 python3 ./patches/scan-glitch/scan-glitch.py <input> [output] [--severity N] [--seed N]
 ```
 
-![scan-glitch example](_output/mclaren-glitch.jpg)
+![scan-glitch example](patches/scan-glitch/example.jpg)
 
 ### echo
 
@@ -200,7 +230,7 @@ python3 ./patches/echo/echo.py <input> [output] [--count N] [--offset-x N] [--of
 
 Default: `--count 12 --offset-x 30 --offset-y 12 --decay 0.6 --blend additive`
 
-![echo example](_output/mclaren-echo.jpg)
+![echo example](patches/echo/example.jpg)
 
 ### kaleidoscope
 
@@ -212,7 +242,7 @@ python3 ./patches/kaleidoscope/kaleidoscope.py <input> [output] [--segments N] [
 
 Default: `--segments 6 --angle 90`
 
-![kaleidoscope example](_output/mclaren-kaleido.jpg)
+![kaleidoscope example](patches/kaleidoscope/example.jpg)
 
 ### polar
 
@@ -224,7 +254,7 @@ python3 ./patches/polar/polar.py <input> [output] [--mode to-polar|from-polar] [
 
 Default: `--mode to-polar --center 0.5,0.5 --rotate 0 --radius 1`
 
-![polar example](_output/mclaren-polar.jpg)
+![polar example](patches/polar/example.jpg)
 
 ### raw-bend
 
@@ -234,11 +264,9 @@ Treat pixel data as a raw audio signal and apply echo, chorus, and bitcrush dist
 python3 ./patches/raw-bend/raw-bend.py <input> [output] [--echo-strength N] [--echo-delay N] [--chorus N] [--bitcrush N]
 ```
 
-Default: `--echo-strength 0.5 --echo-delay 500 --chorus 0.3 --bitcrush 0`
+Default: `--echo-strength 0.8 --echo-delay 2000 --chorus 0.7 --bitcrush 0`
 
-Example: `--echo-strength 0.8 --echo-delay 2000 --chorus 0.7`
-
-![raw-bend example](_output/mclaren-rawbend.jpg)
+![raw-bend example](patches/raw-bend/example.jpg)
 
 ### seam-carve
 
@@ -250,7 +278,7 @@ python3 ./patches/seam-carve/seam-carve.py <input> [output] [--percent N] [--ene
 
 Default: `--percent 35 --energy sobel`
 
-![seam-carve example](_output/mclaren-seamcarve.jpg)
+![seam-carve example](patches/seam-carve/example.jpg)
 
 ### slit-scan
 
@@ -262,7 +290,7 @@ python3 ./patches/slit-scan/slit-scan.py <input> [output] [--slits N] [--max-ang
 
 Default: `--slits <width> --max-angle 180`
 
-![slit-scan example](_output/mclaren-slitscan.jpg)
+![slit-scan example](patches/slit-scan/example.jpg)
 
 ### tile-shuffle
 
@@ -272,11 +300,9 @@ Chop the image into an NxN grid and randomly permute the tiles.
 python3 ./patches/tile-shuffle/tile-shuffle.py <input> [output] [--grid N] [--seed N]
 ```
 
-Default: `--grid 4`
+Default: `--grid 8`
 
-Example: `--grid 8`
-
-![tile-shuffle example](_output/mclaren-shuffle.jpg)
+![tile-shuffle example](patches/tile-shuffle/example.jpg)
 
 ### wrong-stride
 
@@ -288,7 +314,7 @@ python3 ./patches/wrong-stride/wrong-stride.py <input> [output] [--offset N]
 
 Default: `--offset 1`
 
-![wrong-stride example](_output/mclaren-stride.jpg)
+![wrong-stride example](patches/wrong-stride/example.jpg)
 
 ### fft-phase
 
@@ -300,11 +326,11 @@ python3 ./patches/fft-phase/fft-phase.py <input> [output] [--amount N] [--seed N
 
 Default: `--amount 0.35`
 
-![fft-phase example](_output/mclaren-fftphase.jpg)
+![fft-phase example](patches/fft-phase/example.jpg)
 
 ### zoom-blur
 
-Average copies of the image scaled up about a centre point, for radial warp-speed streaks.
+Average copies of the image scaled up about a center point, for radial warp-speed streaks.
 
 ```bash
 python3 ./patches/zoom-blur/zoom-blur.py <input> [output] [--amount N] [--center X,Y] [--samples N]
@@ -312,11 +338,11 @@ python3 ./patches/zoom-blur/zoom-blur.py <input> [output] [--amount N] [--center
 
 Default: `--amount 0.3 --center 0.5,0.5 --samples 32`
 
-![zoom-blur example](_output/mclaren-zoomblur.jpg)
+![zoom-blur example](patches/zoom-blur/example.jpg)
 
 ### swirl
 
-Twist the image around a centre, with the rotation fading out toward a radius.
+Twist the image around a center, with the rotation fading out toward a radius.
 
 ```bash
 python3 ./patches/swirl/swirl.py <input> [output] [--angle DEG] [--radius N] [--center X,Y]
@@ -324,7 +350,7 @@ python3 ./patches/swirl/swirl.py <input> [output] [--angle DEG] [--radius N] [--
 
 Default: `--angle 360 --radius 1.0 --center 0.5,0.5`
 
-![swirl example](_output/mclaren-swirl.jpg)
+![swirl example](patches/swirl/example.jpg)
 
 ### displace
 
@@ -336,7 +362,7 @@ python3 ./patches/displace/displace.py <input> [output] [--amount PX] [--angle D
 
 Default: `--amount 150 --angle 0 --blur 3`
 
-![displace example](_output/mclaren-displace.jpg)
+![displace example](patches/displace/example.jpg)
 
 ### drip
 
@@ -346,11 +372,9 @@ Bleed bright pixels in one direction with a fading tail, like wet paint running.
 python3 ./patches/drip/drip.py <input> [output] [--length PX] [--threshold N] [--direction down|up|left|right]
 ```
 
-Default: `--length 120 --threshold 180 --direction down`
+Default: `--length 500 --threshold 120 --direction down`
 
-Example: `--length 500 --threshold 120`
-
-![drip example](_output/mclaren-drip.jpg)
+![drip example](patches/drip/example.jpg)
 
 ### edge-glow
 
@@ -362,7 +386,7 @@ python3 ./patches/edge-glow/edge-glow.py <input> [output] [--amount N] [--radius
 
 Default: `--amount 1 --radius 6`
 
-![edge-glow example](_output/mclaren-edgeglow.jpg)
+![edge-glow example](patches/edge-glow/example.jpg)
 
 ### contour
 
@@ -374,7 +398,7 @@ python3 ./patches/contour/contour.py <input> [output] [--levels N] [--blur N] [-
 
 Default: `--levels 16 --blur 2 --width 1 --color #ec4899 --amount 1`
 
-![contour example](_output/mclaren-contour.jpg)
+![contour example](patches/contour/example.jpg)
 
 ### bloom
 
@@ -384,15 +408,13 @@ Pull out the highlights, blur them at three radii and screen them back for a sof
 python3 ./patches/bloom/bloom.py <input> [output] [--amount N] [--threshold N] [--radius N]
 ```
 
-Default: `--amount 1 --threshold 170 --radius 8`
+Default: `--amount 2 --threshold 110 --radius 16`
 
-Example: `--amount 2 --threshold 110 --radius 16`
-
-![bloom example](_output/mclaren-bloom.jpg)
+![bloom example](patches/bloom/example.jpg)
 
 ### voronoi-mosaic
 
-Split the image into irregular Voronoi cells filled with their average colour, with optional dark leading like stained glass.
+Split the image into irregular Voronoi cells filled with their average color, with optional dark leading like stained glass.
 
 ```bash
 python3 ./patches/voronoi-mosaic/voronoi-mosaic.py <input> [output] [--size PX] [--jitter N] [--edges PX] [--seed N]
@@ -400,7 +422,7 @@ python3 ./patches/voronoi-mosaic/voronoi-mosaic.py <input> [output] [--size PX] 
 
 Default: `--size 24 --jitter 1 --edges 0`
 
-![voronoi-mosaic example](_output/mclaren-voronoi.jpg)
+![voronoi-mosaic example](patches/voronoi-mosaic/example.jpg)
 
 ### oil-paint
 
@@ -412,11 +434,11 @@ python3 ./patches/oil-paint/oil-paint.py <input> [output] [--radius N]
 
 Default: `--radius 6`
 
-![oil-paint example](_output/mclaren-oilpaint.jpg)
+![oil-paint example](patches/oil-paint/example.jpg)
 
 ### tilt-shift
 
-Blur away from a horizontal focus band and lift the colour, so the scene looks like a miniature.
+Blur away from a horizontal focus band and lift the color, so the scene looks like a miniature.
 
 ```bash
 python3 ./patches/tilt-shift/tilt-shift.py <input> [output] [--blur N] [--focus N] [--band N]
@@ -424,7 +446,7 @@ python3 ./patches/tilt-shift/tilt-shift.py <input> [output] [--blur N] [--focus 
 
 Default: `--blur 10 --focus 0.62 --band 0.25`
 
-![tilt-shift example](_output/mclaren-tiltshift.jpg)
+![tilt-shift example](patches/tilt-shift/example.jpg)
 
 ### flow-streak
 
@@ -436,7 +458,7 @@ python3 ./patches/flow-streak/flow-streak.py <input> [output] [--length N] [--si
 
 Default: `--length 36 --sigma 6`
 
-![flow-streak example](_output/mclaren-flow.jpg)
+![flow-streak example](patches/flow-streak/example.jpg)
 
 ### dither
 
@@ -448,7 +470,7 @@ python3 ./patches/dither/dither.py <input> [output] [--method bayer|floyd|atkins
 
 Default: `--method bayer --levels 2 --matrix 8`
 
-![dither example](_output/mclaren-dither.jpg)
+![dither example](patches/dither/example.jpg)
 
 ### jpeg-rot
 
@@ -458,11 +480,9 @@ Re-save as a low-quality JPEG many times, shifting a pixel each time so the dama
 python3 ./patches/jpeg-rot/jpeg-rot.py <input> [output] [--quality N] [--generations N]
 ```
 
-Default: `--quality 10 --generations 30`
+Default: `--quality 5 --generations 80`
 
-Example: `--quality 5 --generations 80`
-
-![jpeg-rot example](_output/mclaren-jpegrot.jpg)
+![jpeg-rot example](patches/jpeg-rot/example.jpg)
 
 ### ascii
 
@@ -474,7 +494,7 @@ python3 ./patches/ascii/ascii.py <input> [output] [--cell PX] [--charset CHARS]
 
 Default: `--cell 10 --charset " .:-=+*#%@"`
 
-![ascii example](_output/mclaren-ascii.jpg)
+![ascii example](patches/ascii/example.jpg)
 
 ### isolate-threshold
 
@@ -486,7 +506,7 @@ Extract dark pixels from an image with a transparent background. Optionally reco
 
 Default: `--scale 1 --threshold 50 --color "#ff0000"`
 
-![isolate-threshold example](_output/mclaren-threshold.jpg)
+![isolate-threshold example](patches/isolate-threshold/example.jpg)
 
 ### closest-palette
 
@@ -497,7 +517,7 @@ python3 ./patches/closest-palette/closest-palette.py <input> [output] --palette 
 python3 ./patches/closest-palette/closest-palette.py <input> [output] --from-image ref.png --colors N
 ```
 
-![closest-palette example](_output/mclaren-palette.jpg)
+![closest-palette example](patches/closest-palette/example.jpg)
 
 ### invert-lightness
 
@@ -507,7 +527,7 @@ Invert the lightness channel in LAB color space — dark becomes light and vice 
 python3 ./patches/invert-lightness/invert-lightness.py <input> [output]
 ```
 
-![invert-lightness example](_output/mclaren-invl.jpg)
+![invert-lightness example](patches/invert-lightness/example.jpg)
 
 ### posterize-hsv
 
@@ -519,7 +539,7 @@ python3 ./patches/posterize-hsv/posterize-hsv.py <input> [output] [--h-levels N]
 
 Default: `--h-levels 8 --s-levels 4 --v-levels 4`
 
-![posterize-hsv example](_output/mclaren-posterize.jpg)
+![posterize-hsv example](patches/posterize-hsv/example.jpg)
 
 ### thermal
 
@@ -529,11 +549,11 @@ Map brightness to a false-color thermal palette (black to blue to red to yellow 
 python3 ./patches/thermal/thermal.py <input> [output]
 ```
 
-![thermal example](_output/mclaren-thermal.jpg)
+![thermal example](patches/thermal/example.jpg)
 
 ### hue-isolate
 
-Keep one hue band in full colour and turn everything else grey.
+Keep one hue band in full color and turn everything else gray.
 
 ```bash
 python3 ./patches/hue-isolate/hue-isolate.py <input> [output] [--hue DEG] [--width DEG] [--amount N]
@@ -541,7 +561,7 @@ python3 ./patches/hue-isolate/hue-isolate.py <input> [output] [--hue DEG] [--wid
 
 Default: `--hue 25 --width 20 --amount 1` (orange)
 
-![hue-isolate example](_output/mclaren-hueiso.jpg)
+![hue-isolate example](patches/hue-isolate/example.jpg)
 
 ### channel-swap
 
@@ -553,21 +573,19 @@ python3 ./patches/channel-swap/channel-swap.py <input> [output] [--map B,G,R]
 
 Default: `--map B,G,R` (swaps red and blue)
 
-![channel-swap example](_output/mclaren-chswap.jpg)
+![channel-swap example](patches/channel-swap/example.jpg)
 
 ### recolor
 
-Repaint the image's most prevalent colours with the colours you give, most prevalent first, keeping their light and shade. Greys, black and white are left alone.
+Repaint the image's most prevalent colors with the colors you give, most prevalent first, keeping their light and shade. Grays, black and white are left alone.
 
 ```bash
 python3 ./patches/recolor/recolor.py <input> [output] [--colors C1,C2] [--amount N] [--clusters N]
 ```
 
-Default: `--colors "#ec4899" --amount 1 --clusters 6`
+Default: `--colors "#1e3a8a,#facc15" --amount 1 --clusters 6`
 
-Example: `--colors "#1e3a8a,#facc15"`
-
-![recolor example](_output/mclaren-recolor.jpg)
+![recolor example](patches/recolor/example.jpg)
 
 ### dot-halftone
 
@@ -577,7 +595,7 @@ Convert to a halftone dot grid where dot size varies with brightness. Pink dots 
 python3 ./patches/dot-halftone/dot-halftone.py <input> [output] [--spacing N] [--min-dot N] [--max-dot N] [--angle N]
 ```
 
-![dot-halftone example](_output/mclaren-halftone.jpg)
+![dot-halftone example](patches/dot-halftone/example.jpg)
 
 ### line-halftone
 
@@ -587,7 +605,7 @@ Variable-width lines whose thickness maps to brightness. Pink lines on transpare
 python3 ./patches/line-halftone/line-halftone.py <input> [output] [--spacing N] [--min-width N] [--max-width N] [--angle N]
 ```
 
-![line-halftone example](_output/mclaren-lines.jpg)
+![line-halftone example](patches/line-halftone/example.jpg)
 
 ### cross-hatch
 
@@ -597,7 +615,7 @@ Multiple line-halftone passes at different angles, each gated by a brightness th
 python3 ./patches/cross-hatch/cross-hatch.py <input> [output] [--layers N] [--spacing N] [--thresholds N,N,N]
 ```
 
-![cross-hatch example](_output/mclaren-hatch.jpg)
+![cross-hatch example](patches/cross-hatch/example.jpg)
 
 ### stipple
 
@@ -607,4 +625,4 @@ Random dot placement where density maps to brightness. Pink dots on transparent 
 python3 ./patches/stipple/stipple.py <input> [output] [--dots N] [--dot-size N] [--seed N]
 ```
 
-![stipple example](_output/mclaren-stipple.jpg)
+![stipple example](patches/stipple/example.jpg)

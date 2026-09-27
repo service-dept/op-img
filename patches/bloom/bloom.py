@@ -14,9 +14,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Highlight bloom and halation.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
-    parser.add_argument("--amount", type=float, default=1.0, help="Glow strength, 0 to 2 (default: 1.0)")
-    parser.add_argument("--threshold", type=int, default=170, help="Brightness above which pixels glow, 0 to 255 (default: 170)")
-    parser.add_argument("--radius", type=float, default=8.0, help="Base glow radius in pixels (default: 8.0)")
+    parser.add_argument("--amount", type=float, default=2.0, help="Glow strength, 0 to 2 (default: 2.0)")
+    parser.add_argument("--threshold", type=int, default=110, help="Brightness above which pixels glow, 0 to 255 (default: 110)")
+    parser.add_argument("--radius", type=float, default=16.0, help="Base glow radius in pixels (default: 16.0)")
     args = parser.parse_args()
 
     if not os.path.isfile(args.input):
