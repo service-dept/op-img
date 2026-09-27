@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from conftest import _make_gradient, assert_valid_image, skip_without_imagemagick
+from conftest import _make_gradient, assert_valid_image
 
 ALL_PATCHES = [
     "bit-crush", "channel-offset", "channel-swap",
@@ -88,8 +88,7 @@ class TestDispatch:
         assert r.returncode == 0
         assert_valid_image(out)
 
-    @skip_without_imagemagick()
-    def test_dispatch_shell_patch(self, run_op, tmp_workdir):
+    def test_dispatch_passes_options(self, run_op, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "out.png")
         r = run_op(["bit-crush", img, out, "--bits", "2"])
@@ -156,8 +155,7 @@ class TestStack:
         assert r.returncode == 0, r.stderr
         assert_valid_image(str(folder / "my photo-psort-chswap.png"))
 
-    @skip_without_imagemagick()
-    def test_shell_and_python_patches_mix(self, run_op, tmp_workdir):
+    def test_stack_with_fold_options(self, run_op, tmp_workdir):
         tmp_path, img = tmp_workdir
         r = run_op(["pixel-sort", img, "+", "fold", "--axis", "y"])
         assert r.returncode == 0, r.stderr

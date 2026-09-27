@@ -5,11 +5,9 @@ options, its edge cases). Adding a patch means adding its default output name
 here and its name to ALL_PATCHES in test_op_cli.py.
 """
 
-import os
-
 import pytest
 
-from conftest import HAS_IMAGEMAGICK, ROOT, assert_valid_image
+from conftest import assert_valid_image
 from test_op_cli import ALL_PATCHES
 
 # The name each patch gives its output when none is passed, for an input called input.png.
@@ -64,18 +62,11 @@ REQUIRED_ARGS = {
 
 
 def _script(name):
-    return f"{name}.sh" if os.path.isfile(os.path.join(ROOT, "patches", name, f"{name}.sh")) else f"{name}.py"
+    return f"{name}.py"
 
 
 def _patches():
-    """Every patch, skipping the shell patches when ImageMagick is missing."""
-    params = []
-    for name in ALL_PATCHES:
-        marks = []
-        if _script(name).endswith(".sh"):
-            marks.append(pytest.mark.skipif(not HAS_IMAGEMAGICK, reason="ImageMagick not installed"))
-        params.append(pytest.param(name, marks=marks, id=name))
-    return params
+    return [pytest.param(name, id=name) for name in ALL_PATCHES]
 
 
 def test_every_patch_has_a_default_name():

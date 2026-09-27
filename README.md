@@ -22,13 +22,7 @@ Move into it:
 cd op-img
 ```
 
-Install ImageMagick for the shell patches:
-
-```bash
-brew install imagemagick
-```
-
-Install Python3 with Pillow, numpy and scipy for the Python patches:
+Install Python3 with Pillow, numpy and scipy:
 
 ```bash
 pip3 install Pillow numpy scipy
@@ -82,10 +76,10 @@ All examples below use this image as input:
 
 ### bit-crush
 
-Reduce color depth by posterizing to N bits per channel.
+Reduce color depth to N bits per channel, with a light dither that leaves flat, saturated blotches.
 
 ```bash
-./patches/bit-crush/bit-crush.sh <input> [output] [--bits N]
+python3 ./patches/bit-crush/bit-crush.py <input> [output] [--bits N]
 ```
 
 Default: `--bits 1` (2 levels per channel, 8 colors)
@@ -97,7 +91,7 @@ Default: `--bits 1` (2 levels per channel, 8 colors)
 Downscale to a tiny resolution and upscale back with nearest-neighbor for a chunky pixel look.
 
 ```bash
-./patches/res-crush/res-crush.sh <input> [output] [--size N]
+python3 ./patches/res-crush/res-crush.py <input> [output] [--size N]
 ```
 
 Default: `--size 64`
@@ -109,7 +103,7 @@ Default: `--size 64`
 Shift R, G, B channels by independent pixel amounts for a misregistered print / chromatic aberration look.
 
 ```bash
-./patches/channel-offset/channel-offset.sh <input> [output] [--r X,Y] [--g X,Y] [--b X,Y]
+python3 ./patches/channel-offset/channel-offset.py <input> [output] [--r X,Y] [--g X,Y] [--b X,Y]
 ```
 
 Default: `--r 140,50 --g -20,40 --b -120,-40`
@@ -121,8 +115,10 @@ Default: `--r 140,50 --g -20,40 --b -120,-40`
 Mirror or repeat one half of the image across a fold line.
 
 ```bash
-./patches/fold/fold.sh <input> [output] [--axis x|y] [--position N] [--mode mirror|repeat]
+python3 ./patches/fold/fold.py <input> [output] [--axis x|y] [--position N] [--mode mirror|repeat]
 ```
+
+Default: `--axis x --position center --mode mirror`
 
 ![fold example](patches/fold/example.jpg)
 
@@ -426,13 +422,13 @@ Default: `--cell 10 --charset " .:-=+*#%@"`
 
 ### isolate-threshold
 
-Extract dark pixels from an image with a transparent background. Optionally recolor them and upscale with nearest-neighbor.
+Keep the pixels brighter than a threshold as a flat color on a transparent background, optionally upscaled with nearest-neighbor. The default output is PNG; a JPEG output gets a white background.
 
 ```bash
-./patches/isolate-threshold/isolate-threshold.sh <input> [output] [--scale N] [--threshold N] [--color "#hex"]
+python3 ./patches/isolate-threshold/isolate-threshold.py <input> [output] [--threshold N] [--color "#hex"] [--scale N]
 ```
 
-Default: `--scale 1 --threshold 50 --color "#ff0000"`
+Default: `--threshold 50 --color "#ff0000" --scale 1`
 
 ![isolate-threshold example](patches/isolate-threshold/example.jpg)
 
@@ -564,7 +560,7 @@ op <patch> <input> [output] [--args] + <patch> [--args] + ...
 ```
 
 ```bash
-op pixel-sort photo.jpg + fold + polar            # writes photo-psort-fold-polar.png
+op pixel-sort photo.jpg + fold + polar            # writes photo-psort-fold-polar.jpg
 op pixel-sort photo.jpg --by hue + channel-swap   # options follow the patch they belong to
 op seam-carve photo.jpg out.jpg + thermal         # an output after the input names the final file
 ```
