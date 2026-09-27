@@ -14,13 +14,25 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/service-dept/op-img.git
+```
+
+Move into it:
+
+```bash
 cd op-img
 ```
 
-Install the requirements:
+Install ImageMagick for the shell patches:
 
-- [ImageMagick](https://imagemagick.org/) for the shell patches: `brew install imagemagick`
-- [Python 3](https://www.python.org/) with Pillow, numpy and scipy for the Python patches: `pip3 install Pillow numpy scipy`
+```bash
+brew install imagemagick
+```
+
+Install Python3 with Pillow, numpy and scipy for the Python patches:
+
+```bash
+pip3 install Pillow numpy scipy
+```
 
 Add `op` to your PATH (one-time setup, from the `op-img` folder):
 
@@ -28,187 +40,39 @@ Add `op` to your PATH (one-time setup, from the `op-img` folder):
 ln -s "$(pwd)/op" /usr/local/bin/op
 ```
 
-Use it from anywhere on your machine:
+Use it from anywhere on your machine.
+
+Show the usage and three patches at random:
 
 ```bash
-op                                                       # show usage and three patches at random
-op bit-crush photo.jpg                                   # default 1-bit crush
-op pixel-sort photo.jpg                                  # no output given: saves photo-psort.jpg next to photo.jpg
-op dot-halftone photo.jpg out.png --spacing 8            # halftone dots 8 px apart, saved as out.png
-op closest-palette photo.jpg --palette "#000,#fff,#f00"  # snap every pixel to black, white or red
+op
+```
+
+Crush the colors to 1 bit per channel:
+
+```bash
+op bit-crush photo.jpg
+```
+
+Sort the pixels, saving `photo-psort.jpg` next to `photo.jpg` because no output is given:
+
+```bash
+op pixel-sort photo.jpg
+```
+
+Draw halftone dots 8 px apart and save them as `out.png`:
+
+```bash
+op dot-halftone photo.jpg out.png --spacing 8
+```
+
+Snap every pixel to black, white or red:
+
+```bash
+op closest-palette photo.jpg --palette "#000,#fff,#f00"
 ```
 
 The input comes first, then an optional output. Omit the output to save the result next to the input with the patch's suffix.
-
-## Stacking patches
-
-Join patches with `+` to run them one after another, each one building on the previous result:
-
-```bash
-op <patch> <input> [output] [--args] + <patch> [--args] + ...
-```
-
-```bash
-op pixel-sort photo.jpg + fold + polar            # writes photo-psort-fold-polar.png
-op pixel-sort photo.jpg --by hue + channel-swap   # options follow the patch they belong to
-op seam-carve photo.jpg out.jpg + thermal         # an output after the input names the final file
-```
-
-The input, and the output if you give one, come right after the first patch. Subsequent patches only take arguments. Omit the output path to save the result in the same directory as the input, with each patch's suffix applied in order.
-
-### contour + swirl
-
-Contour traces the photo's brightness bands in pink lines, and swirl twists them into a vortex.
-
-```bash
-op contour photo.jpg + swirl
-```
-
-![contour + swirl](patches/contour/stack-contour-swirl.jpg)
-
-### fold + polar + pixel-sort + channel-swap
-
-Fold mirrors the car, polar wraps it into an arch, pixel-sort streaks it, and channel-swap turns the orange blue.
-
-```bash
-op fold photo.jpg + polar --center 0.3,0.5 --rotate 200 --radius 0.9 + pixel-sort + channel-swap
-```
-
-![fold + polar + pixel-sort + channel-swap](patches/fold/stack-fold-polar-pixel-sort-channel-swap.jpg)
-
-### thermal + invert-lightness
-
-Heat colors first, then the lightness flipped, which turns the car magenta and pink.
-
-```bash
-op thermal photo.jpg + invert-lightness
-```
-
-![thermal + invert-lightness](patches/thermal/stack-thermal-invert-lightness.jpg)
-
-### invert-lightness + thermal
-
-The same two patches the other way round: with the lightness flipped first, the paint reads cold and the tires and grass run white-hot.
-
-```bash
-op invert-lightness photo.jpg + thermal
-```
-
-![invert-lightness + thermal](patches/invert-lightness/stack-invert-lightness-thermal.jpg)
-
-### slit-scan + thermal
-
-Slit-scan melts the car into curves, and thermal paints them in heat colors.
-
-```bash
-op slit-scan photo.jpg + thermal
-```
-
-![slit-scan + thermal](patches/slit-scan/stack-slit-scan-thermal.jpg)
-
-### polar + drip + polar
-
-Drips run straight down in polar space, so they come back as rays bursting from an off-center pole.
-
-```bash
-op polar photo.jpg --center 0.62,0.4 --rotate 150 --radius 0.85 + drip --length 500 --threshold 120 + polar --mode from-polar --center 0.62,0.4 --rotate 150 --radius 0.85
-```
-
-![polar + drip + polar](patches/polar/stack-polar-drip-polar.jpg)
-
-### polar + tile-shuffle + polar
-
-Tiles shuffled in polar space come back as rings of turned wedges.
-
-```bash
-op polar photo.jpg + tile-shuffle --grid 8 + polar --mode from-polar
-```
-
-![polar + tile-shuffle + polar](patches/polar/stack-polar-tile-shuffle-polar.jpg)
-
-### dither + zoom-blur
-
-Atkinson dithering, then a zoom blur that smears the dots into speed streaks.
-
-```bash
-op dither photo.jpg --method atkinson + zoom-blur
-```
-
-![dither + zoom-blur](patches/dither/stack-dither-zoom-blur.jpg)
-
-### kaleidoscope + ascii
-
-A kaleidoscope emblem, redrawn in characters.
-
-```bash
-op kaleidoscope photo.jpg + ascii
-```
-
-![kaleidoscope + ascii](patches/kaleidoscope/stack-kaleidoscope-ascii.jpg)
-
-### scan-glitch + polar
-
-Scan-glitch's torn rows, wrapped into arches around a shifted pole.
-
-```bash
-op scan-glitch photo.jpg + polar --center 0.72,0.3 --rotate 105 --radius 0.7
-```
-
-![scan-glitch + polar](patches/scan-glitch/stack-scan-glitch-polar.jpg)
-
-### swirl + kaleidoscope
-
-A swirl, mirrored into a chrome mandala.
-
-```bash
-op swirl photo.jpg + kaleidoscope
-```
-
-![swirl + kaleidoscope](patches/swirl/stack-swirl-kaleidoscope.jpg)
-
-### res-crush + zoom-blur
-
-Big pixels, then a zoom blur that streaks them outward.
-
-```bash
-op res-crush photo.jpg --size 32 + zoom-blur
-```
-
-![res-crush + zoom-blur](patches/res-crush/stack-res-crush-zoom-blur.jpg)
-
-### bit-crush + flow-streak
-
-A 1-bit crush, brushed back into painterly strokes.
-
-```bash
-op bit-crush photo.jpg --bits 1 + flow-streak
-```
-
-![bit-crush + flow-streak](patches/bit-crush/stack-bit-crush-flow-streak.jpg)
-
-### channel-offset + swirl
-
-Split color channels, twisted into a swirl.
-
-```bash
-op channel-offset photo.jpg --r 140,50 --g -20,40 --b -120,-40 + swirl
-```
-
-![channel-offset + swirl](patches/channel-offset/stack-channel-offset-swirl.jpg)
-
-### pixel-sort + drip + invert-lightness
-
-Columns sorted, bright pixels dripping upward, then the lightness flipped.
-
-```bash
-op pixel-sort photo.jpg --direction column + drip --length 500 --threshold 120 --direction up + invert-lightness
-```
-
-![pixel-sort + drip + invert-lightness](patches/pixel-sort/stack-pixel-sort-drip-invert-lightness.jpg)
-
-## Adding a patch
-
-A patch is a directory in `patches/`, named after the patch. It holds either a Python script with its `requirements.txt`, or a shell script. `op` finds patches by name, so there's nothing to register. A missing input prints `Error: file not found`. Its own tests go in `tests/test_<name>.py`. The name goes in `ALL_PATCHES` in `tests/test_op_cli.py`, and its default output name in `DEFAULT_NAMES` in `tests/test_conventions.py`, which checks the shared conventions for every patch.
 
 ## Patches
 
@@ -690,3 +554,173 @@ python3 ./patches/stipple/stipple.py <input> [output] [--dots N] [--dot-size N] 
 ```
 
 ![stipple example](patches/stipple/example.jpg)
+
+## Stacking patches
+
+Join patches with `+` to run them one after another, each one building on the previous result:
+
+```bash
+op <patch> <input> [output] [--args] + <patch> [--args] + ...
+```
+
+```bash
+op pixel-sort photo.jpg + fold + polar            # writes photo-psort-fold-polar.png
+op pixel-sort photo.jpg --by hue + channel-swap   # options follow the patch they belong to
+op seam-carve photo.jpg out.jpg + thermal         # an output after the input names the final file
+```
+
+The input, and the output if you give one, come right after the first patch. Subsequent patches only take arguments. Omit the output path to save the result in the same directory as the input, with each patch's suffix applied in order.
+
+### contour + swirl
+
+Contour traces the photo's brightness bands in pink lines, and swirl twists them into a vortex.
+
+```bash
+op contour photo.jpg + swirl
+```
+
+![contour + swirl](patches/contour/stack-contour-swirl.jpg)
+
+### fold + polar + pixel-sort + channel-swap
+
+Fold mirrors the car, polar wraps it into an arch, pixel-sort streaks it, and channel-swap turns the orange blue.
+
+```bash
+op fold photo.jpg + polar --center 0.3,0.5 --rotate 200 --radius 0.9 + pixel-sort + channel-swap
+```
+
+![fold + polar + pixel-sort + channel-swap](patches/fold/stack-fold-polar-pixel-sort-channel-swap.jpg)
+
+### thermal + invert-lightness
+
+Heat colors first, then the lightness flipped, which turns the car magenta and pink.
+
+```bash
+op thermal photo.jpg + invert-lightness
+```
+
+![thermal + invert-lightness](patches/thermal/stack-thermal-invert-lightness.jpg)
+
+### invert-lightness + thermal
+
+The same two patches the other way round: with the lightness flipped first, the paint reads cold and the tires and grass run white-hot.
+
+```bash
+op invert-lightness photo.jpg + thermal
+```
+
+![invert-lightness + thermal](patches/invert-lightness/stack-invert-lightness-thermal.jpg)
+
+### slit-scan + thermal
+
+Slit-scan melts the car into curves, and thermal paints them in heat colors.
+
+```bash
+op slit-scan photo.jpg + thermal
+```
+
+![slit-scan + thermal](patches/slit-scan/stack-slit-scan-thermal.jpg)
+
+### polar + drip + polar
+
+Drips run straight down in polar space, so they come back as rays bursting from an off-center pole.
+
+```bash
+op polar photo.jpg --center 0.62,0.4 --rotate 150 --radius 0.85 + drip --length 500 --threshold 120 + polar --mode from-polar --center 0.62,0.4 --rotate 150 --radius 0.85
+```
+
+![polar + drip + polar](patches/polar/stack-polar-drip-polar.jpg)
+
+### polar + tile-shuffle + polar
+
+Tiles shuffled in polar space come back as rings of turned wedges.
+
+```bash
+op polar photo.jpg + tile-shuffle --grid 8 + polar --mode from-polar
+```
+
+![polar + tile-shuffle + polar](patches/polar/stack-polar-tile-shuffle-polar.jpg)
+
+### dither + zoom-blur
+
+Atkinson dithering, then a zoom blur that smears the dots into speed streaks.
+
+```bash
+op dither photo.jpg --method atkinson + zoom-blur
+```
+
+![dither + zoom-blur](patches/dither/stack-dither-zoom-blur.jpg)
+
+### kaleidoscope + ascii
+
+A kaleidoscope emblem, redrawn in characters.
+
+```bash
+op kaleidoscope photo.jpg + ascii
+```
+
+![kaleidoscope + ascii](patches/kaleidoscope/stack-kaleidoscope-ascii.jpg)
+
+### scan-glitch + polar
+
+Scan-glitch's torn rows, wrapped into arches around a shifted pole.
+
+```bash
+op scan-glitch photo.jpg + polar --center 0.72,0.3 --rotate 105 --radius 0.7
+```
+
+![scan-glitch + polar](patches/scan-glitch/stack-scan-glitch-polar.jpg)
+
+### swirl + kaleidoscope
+
+A swirl, mirrored into a chrome mandala.
+
+```bash
+op swirl photo.jpg + kaleidoscope
+```
+
+![swirl + kaleidoscope](patches/swirl/stack-swirl-kaleidoscope.jpg)
+
+### res-crush + zoom-blur
+
+Big pixels, then a zoom blur that streaks them outward.
+
+```bash
+op res-crush photo.jpg --size 32 + zoom-blur
+```
+
+![res-crush + zoom-blur](patches/res-crush/stack-res-crush-zoom-blur.jpg)
+
+### bit-crush + flow-streak
+
+A 1-bit crush, brushed back into painterly strokes.
+
+```bash
+op bit-crush photo.jpg --bits 1 + flow-streak
+```
+
+![bit-crush + flow-streak](patches/bit-crush/stack-bit-crush-flow-streak.jpg)
+
+### channel-offset + swirl
+
+Split color channels, twisted into a swirl.
+
+```bash
+op channel-offset photo.jpg --r 140,50 --g -20,40 --b -120,-40 + swirl
+```
+
+![channel-offset + swirl](patches/channel-offset/stack-channel-offset-swirl.jpg)
+
+### pixel-sort + drip + invert-lightness
+
+Columns sorted, bright pixels dripping upward, then the lightness flipped.
+
+```bash
+op pixel-sort photo.jpg --direction column + drip --length 500 --threshold 120 --direction up + invert-lightness
+```
+
+![pixel-sort + drip + invert-lightness](patches/pixel-sort/stack-pixel-sort-drip-invert-lightness.jpg)
+
+## Adding a patch
+
+A patch is a directory in `patches/`, named after the patch. It holds either a Python script with its `requirements.txt`, or a shell script. `op` finds patches by name, so there's nothing to register. A missing input prints `Error: file not found`. Its own tests go in `tests/test_<name>.py`. The name goes in `ALL_PATCHES` in `tests/test_op_cli.py`, and its default output name in `DEFAULT_NAMES` in `tests/test_conventions.py`, which checks the shared conventions for every patch.
