@@ -20,7 +20,17 @@ def main() -> None:
         default="to-polar",
         help="Direction of transformation (default: to-polar)",
     )
+    parser.add_argument("--center", default="0.5,0.5", help="Pole position as X,Y fractions of the image (default: 0.5,0.5)")
+    parser.add_argument("--rotate", type=float, default=0.0, help="Angle offset in degrees (default: 0.0)")
+    parser.add_argument("--radius", type=float, default=1.0,
+                        help="Outer radius as a fraction of the distance to the farthest corner (default: 1.0)")
     args = parser.parse_args()
+    try:
+        fx, fy = (float(v) for v in args.center.split(","))
+    except ValueError:
+        parser.error("--center must be two numbers, X,Y (for example 0.5,0.5)")
+    if args.radius <= 0:
+        parser.error("--radius must be greater than 0")
 
     if not os.path.isfile(args.input):
         print(f"Error: file not found: {args.input}", file=sys.stderr)
@@ -30,8 +40,10 @@ def main() -> None:
     arr = np.array(img, dtype=np.float64)
     h, w, _ = arr.shape
 
-    cx, cy = w / 2.0, h / 2.0
-    max_radius = np.sqrt(cx ** 2 + cy ** 2)
+    cx, cy = w * fx, h * fy
+    # Distance from the pole to the farthest corner, so radius 1 covers the whole frame.
+    max_radius = max(np.hypot(x - cx, y - cy) for x in (0, w) for y in (0, h)) * args.radius
+    rot = np.radians(args.rotate)
 
     # Create output coordinate grid
     yy, xx = np.mgrid[0:h, 0:w]
@@ -40,7 +52,7 @@ def main() -> None:
         # Output (x, y) maps to source at:
         # angle = x * 2*pi / width
         # radius = y * max_radius / height
-        angle = xx.astype(np.float64) * (2.0 * np.pi) / w
+        angle = xx.astype(np.float64) * (2.0 * np.pi) / w + rot
         radius = yy.astype(np.float64) * max_radius / h
 
         src_x = cx + radius * np.cos(angle)
@@ -50,7 +62,7 @@ def main() -> None:
         # Source pixel at (x, y) in polar output came from angle and radius
         dx = xx.astype(np.float64) - cx
         dy = yy.astype(np.float64) - cy
-        angle = np.arctan2(dy, dx) % (2.0 * np.pi)
+        angle = (np.arctan2(dy, dx) - rot) % (2.0 * np.pi)
         radius = np.sqrt(dx ** 2 + dy ** 2)
 
         src_x = angle * w / (2.0 * np.pi)
