@@ -6,20 +6,6 @@ from conftest import assert_valid_image
 
 
 class TestSeamCarve:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("seam-carve", "seam-carve.py", [img, "--percent", "10"])
-        assert r.returncode == 0
-        out = str(tmp_path / "input-seamcarve.png")
-        assert_valid_image(out)
-
-    def test_explicit_output(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        out = str(tmp_path / "custom.png")
-        r = run_tool("seam-carve", "seam-carve.py", [img, out, "--percent", "30", "--energy", "sobel"])
-        assert r.returncode == 0
-        assert_valid_image(out)
-
     def test_output_width_reduced(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "reduced.png")
@@ -40,12 +26,3 @@ class TestSeamCarve:
         assert r.returncode == 0
         result = assert_valid_image(out)
         assert result.size[1] == 64
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("seam-carve", "seam-carve.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "not found" in r.stderr.lower()
-
-    def test_no_args(self, run_tool):
-        r = run_tool("seam-carve", "seam-carve.py", [])
-        assert r.returncode != 0

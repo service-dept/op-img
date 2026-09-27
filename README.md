@@ -144,7 +144,7 @@ op pixel-sort photo.jpg --direction column + drip --length 500 --threshold 120 -
 
 ## Adding a patch
 
-A patch is a directory in `patches/`, named after the patch. It holds either a Python script with its `requirements.txt`, or a shell script. `op` finds patches by name, so there's nothing to register. The input comes first, then an optional output. Omit the output to save the result next to the input with the patch's suffix. A missing input prints `Error: file not found`. Tests go in `tests/test_<name>.py`, and the name goes in `ALL_PATCHES` in `tests/test_op_cli.py`. Write in US spelling: color, gray, center.
+A patch is a directory in `patches/`, named after the patch. It holds either a Python script with its `requirements.txt`, or a shell script. `op` finds patches by name, so there's nothing to register. The input comes first, then an optional output. Omit the output to save the result next to the input with the patch's suffix. A missing input prints `Error: file not found`. Its own tests go in `tests/test_<name>.py`. The name goes in `ALL_PATCHES` in `tests/test_op_cli.py`, and its default output name in `DEFAULT_NAMES` in `tests/test_conventions.py`, which checks the shared conventions for every patch. Write in US spelling: color, gray, center.
 
 ## Patches
 

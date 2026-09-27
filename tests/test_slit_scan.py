@@ -6,20 +6,6 @@ from conftest import assert_valid_image
 
 
 class TestSlitScan:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("slit-scan", "slit-scan.py", [img, "--slits", "16"])
-        assert r.returncode == 0
-        out = str(tmp_path / "input-slitscan.png")
-        assert_valid_image(out)
-
-    def test_explicit_output(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        out = str(tmp_path / "custom.png")
-        r = run_tool("slit-scan", "slit-scan.py", [img, out, "--slits", "8", "--max-angle", "90"])
-        assert r.returncode == 0
-        assert_valid_image(out)
-
     def test_output_dimensions_match_input(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "dims.png")
@@ -27,12 +13,3 @@ class TestSlitScan:
         assert r.returncode == 0
         result = assert_valid_image(out)
         assert result.size == (64, 64)
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("slit-scan", "slit-scan.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "not found" in r.stderr.lower()
-
-    def test_no_args(self, run_tool):
-        r = run_tool("slit-scan", "slit-scan.py", [])
-        assert r.returncode != 0

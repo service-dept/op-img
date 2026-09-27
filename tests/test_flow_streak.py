@@ -20,12 +20,6 @@ def _horizontal_stripes(path: str) -> str:
 
 
 class TestFlowStreak:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("flow-streak", "flow-streak.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-flow.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -55,12 +49,3 @@ class TestFlowStreak:
         r = run_tool("flow-streak", "flow-streak.py", [img, out, "--length", "12"])
         assert r.returncode == 0
         assert np.abs(_pixels(out) - _pixels(img)).mean() > 1
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("flow-streak", "flow-streak.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("flow-streak", "flow-streak.py", [])
-        assert r.returncode != 0

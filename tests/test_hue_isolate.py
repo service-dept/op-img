@@ -19,12 +19,6 @@ def _orange_and_green(path: str) -> str:
 
 
 class TestHueIsolate:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("hue-isolate", "hue-isolate.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-hueiso.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -49,12 +43,3 @@ class TestHueIsolate:
         assert tuple(px[10, 10]) == (240, 120, 20)
         green = px[10, 50]
         assert green.max() - green.min() <= 1
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("hue-isolate", "hue-isolate.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("hue-isolate", "hue-isolate.py", [])
-        assert r.returncode != 0

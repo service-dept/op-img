@@ -7,13 +7,6 @@ from conftest import assert_valid_image
 
 
 class TestChannelSwap:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("channel-swap", "channel-swap.py", [img])
-        assert r.returncode == 0
-        out = str(tmp_path / "input-chswap.png")
-        assert_valid_image(out)
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -34,12 +27,3 @@ class TestChannelSwap:
         np.testing.assert_array_equal(swapped[:, :, 0], original[:, :, 2])
         np.testing.assert_array_equal(swapped[:, :, 1], original[:, :, 1])
         np.testing.assert_array_equal(swapped[:, :, 2], original[:, :, 0])
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("channel-swap", "channel-swap.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "not found" in r.stderr.lower()
-
-    def test_no_args(self, run_tool):
-        r = run_tool("channel-swap", "channel-swap.py", [])
-        assert r.returncode != 0

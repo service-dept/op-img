@@ -18,12 +18,6 @@ def _split(path: str) -> str:
 
 
 class TestJpegRot:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("jpeg-rot", "jpeg-rot.py", [img])
-        assert r.returncode == 0
-        assert_valid_image(str(tmp_path / "input-jpegrot.png"))
-
     def test_explicit_output(self, run_tool, tmp_workdir):
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "custom.png")
@@ -49,12 +43,3 @@ class TestJpegRot:
         assert np.abs(px - _pixels(img)).mean() > 1
         assert px[:, 8].mean() < 60
         assert px[:, 56].mean() > 190
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("jpeg-rot", "jpeg-rot.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "Error: file not found" in r.stderr
-
-    def test_no_args(self, run_tool):
-        r = run_tool("jpeg-rot", "jpeg-rot.py", [])
-        assert r.returncode != 0

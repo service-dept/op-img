@@ -7,20 +7,6 @@ from conftest import assert_valid_image
 
 
 class TestInvertLightness:
-    def test_default_args(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        r = run_tool("invert-lightness", "invert-lightness.py", [img])
-        assert r.returncode == 0
-        out = str(tmp_path / "input-invl.png")
-        assert_valid_image(out)
-
-    def test_explicit_output(self, run_tool, tmp_workdir):
-        tmp_path, img = tmp_workdir
-        out = str(tmp_path / "custom.png")
-        r = run_tool("invert-lightness", "invert-lightness.py", [img, out])
-        assert r.returncode == 0
-        assert_valid_image(out)
-
     def test_pixels_changed(self, run_tool, tmp_workdir):
         """Verify the output is visually different from the input."""
         tmp_path, img = tmp_workdir
@@ -53,12 +39,3 @@ class TestInvertLightness:
         roundtrip = np.array(Image.open(out), dtype=np.float64)
         mae = np.mean(np.abs(original - roundtrip))
         assert mae < 30, f"Mean absolute error too high: {mae:.1f}"
-
-    def test_missing_input(self, run_tool):
-        r = run_tool("invert-lightness", "invert-lightness.py", ["/nonexistent/image.png"])
-        assert r.returncode != 0
-        assert "not found" in r.stderr.lower()
-
-    def test_no_args(self, run_tool):
-        r = run_tool("invert-lightness", "invert-lightness.py", [])
-        assert r.returncode != 0

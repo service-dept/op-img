@@ -41,7 +41,7 @@ if [ -z "$INPUT" ]; then
 fi
 
 if [ ! -f "$INPUT" ]; then
-  echo "Error: File not found: $INPUT" >&2
+  echo "Error: file not found: $INPUT" >&2
   exit 1
 fi
 
