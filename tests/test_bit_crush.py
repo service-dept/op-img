@@ -13,7 +13,7 @@ class TestBitCrush:
         tmp_path, img = tmp_workdir
         r = run_tool("bit-crush", "bit-crush.sh", [img])
         assert r.returncode == 0
-        out = str(tmp_path / "input-crush-3bit.png")
+        out = str(tmp_path / "input-crush-1bit.png")
         assert_valid_image(out)
 
     def test_explicit_options(self, run_tool, tmp_workdir):

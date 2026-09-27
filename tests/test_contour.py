@@ -13,7 +13,7 @@ def _pixels(path: str) -> np.ndarray:
 
 
 def _ramp(path: str) -> str:
-    """Grey ramp from black on the left to white on the right."""
+    """Gray ramp from black on the left to white on the right."""
     row = np.linspace(0, 255, 64).astype(np.uint8)
     arr = np.repeat(np.repeat(row[None, :, None], 64, axis=0), 3, axis=2)
     Image.fromarray(arr).save(path)

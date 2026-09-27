@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Split the image into irregular Voronoi cells filled with their mean colour, with optional dark leading."""
+"""Split the image into irregular Voronoi cells filled with their mean color, with optional dark leading."""
 
 import argparse
 import os
@@ -36,16 +36,16 @@ def main() -> None:
     arr = np.array(Image.open(args.input).convert("RGB"), dtype=np.float64)
     h, w, _ = arr.shape
 
-    # Seeds sit on a grid of cell centres; at size 1 with no jitter every pixel is its own cell.
+    # Seeds sit on a grid of cell centers; at size 1 with no jitter every pixel is its own cell.
     rng = np.random.default_rng(args.seed)
-    centres_y = np.arange((args.size - 1) / 2.0, h, args.size)
-    centres_x = np.arange((args.size - 1) / 2.0, w, args.size)
+    centers_y = np.arange((args.size - 1) / 2.0, h, args.size)
+    centers_x = np.arange((args.size - 1) / 2.0, w, args.size)
     # An image smaller than one cell still gets a single seed.
-    if centres_y.size == 0:
-        centres_y = np.array([(h - 1) / 2.0])
-    if centres_x.size == 0:
-        centres_x = np.array([(w - 1) / 2.0])
-    gy, gx = np.meshgrid(centres_y, centres_x, indexing="ij")
+    if centers_y.size == 0:
+        centers_y = np.array([(h - 1) / 2.0])
+    if centers_x.size == 0:
+        centers_x = np.array([(w - 1) / 2.0])
+    gy, gx = np.meshgrid(centers_y, centers_x, indexing="ij")
     seeds = np.column_stack([gy.ravel(), gx.ravel()])
     seeds += rng.uniform(-0.5, 0.5, seeds.shape) * args.jitter * args.size
 

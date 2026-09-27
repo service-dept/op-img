@@ -39,7 +39,7 @@ def _gradient_array(size: int = 64) -> np.ndarray:
 @pytest.mark.parametrize("name", NAMES)
 @pytest.mark.parametrize("mode", ["RGBA", "L", "P"])
 def test_accepts_other_modes(run_tool, tmp_path, name, mode):
-    """Transparent, greyscale and palette inputs all produce an RGB image the same size."""
+    """Transparent, grayscale and palette inputs all produce an RGB image the same size."""
     src = str(tmp_path / f"in-{mode}.png")
     img = Image.fromarray(_gradient_array())
     if mode == "RGBA":

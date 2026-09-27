@@ -16,7 +16,7 @@ def main() -> None:
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--blur", type=float, default=10.0, help="Largest blur radius, 0 to 40 (default: 10.0)")
-    parser.add_argument("--focus", type=float, default=0.62, help="Centre of the sharp band as a fraction of height (default: 0.62)")
+    parser.add_argument("--focus", type=float, default=0.62, help="Center of the sharp band as a fraction of height (default: 0.62)")
     parser.add_argument("--band", type=float, default=0.25, help="Height of the sharp band as a fraction of height (default: 0.25)")
     args = parser.parse_args()
 

@@ -27,7 +27,7 @@ def main() -> None:
     h, w, _ = arr.shape
 
     # The phase of real noise is Hermitian, so the inverse transform stays real.
-    # One noise field for all channels keeps colour coherent; zeroing the DC term keeps the mean.
+    # One noise field for all channels keeps color coherent; zeroing the DC term keeps the mean.
     rng = np.random.default_rng(args.seed)
     noise = np.angle(np.fft.fft2(rng.standard_normal((h, w))))
     noise[0, 0] = 0.0

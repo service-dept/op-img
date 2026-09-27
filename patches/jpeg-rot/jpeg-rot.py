@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Re-encode as a low-quality JPEG many times, shifting a pixel each time so the artefacts pile up."""
+"""Re-encode as a low-quality JPEG many times, shifting a pixel each time so the artifacts pile up."""
 
 import argparse
 import io
@@ -13,8 +13,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generational JPEG loss.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
-    parser.add_argument("--quality", type=int, default=10, help="JPEG quality per generation, 1 to 95 (default: 10)")
-    parser.add_argument("--generations", type=int, default=30, help="Number of re-encodes, 0 to 200 (default: 30)")
+    parser.add_argument("--quality", type=int, default=5, help="JPEG quality per generation, 1 to 95 (default: 5)")
+    parser.add_argument("--generations", type=int, default=80, help="Number of re-encodes, 0 to 200 (default: 80)")
     args = parser.parse_args()
 
     if not os.path.isfile(args.input):

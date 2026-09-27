@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Keep one hue band in full colour and desaturate everything else."""
+"""Keep one hue band in full color and desaturate everything else."""
 
 import argparse
 import os
@@ -10,7 +10,7 @@ from PIL import Image
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Colour pop: keep one hue, grey out the rest.")
+    parser = argparse.ArgumentParser(description="Color pop: keep one hue, gray out the rest.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--hue", type=float, default=25.0, help="Hue to keep in degrees, 0 to 360 (default: 25.0)")

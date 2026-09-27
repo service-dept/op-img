@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Twist the image around a centre, with the rotation falling off toward a radius."""
+"""Twist the image around a center, with the rotation falling off toward a radius."""
 
 import argparse
 import os
@@ -21,12 +21,12 @@ def parse_center(value: str) -> tuple[float, float]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Swirl the image around a centre point.")
+    parser = argparse.ArgumentParser(description="Swirl the image around a center point.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
-    parser.add_argument("--angle", type=float, default=360.0, help="Rotation at the centre in degrees, -1080 to 1080 (default: 360.0)")
+    parser.add_argument("--angle", type=float, default=360.0, help="Rotation at the center in degrees, -1080 to 1080 (default: 360.0)")
     parser.add_argument("--radius", type=float, default=1.0, help="Swirl radius as a fraction of the half-diagonal, 0.1 to 1.5 (default: 1.0)")
-    parser.add_argument("--center", type=parse_center, default=(0.5, 0.5), help="Swirl centre as X,Y fractions (default: 0.5,0.5)")
+    parser.add_argument("--center", type=parse_center, default=(0.5, 0.5), help="Swirl center as X,Y fractions (default: 0.5,0.5)")
     args = parser.parse_args()
 
     if not os.path.isfile(args.input):

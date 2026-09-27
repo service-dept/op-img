@@ -16,20 +16,20 @@ def main() -> None:
     parser.add_argument(
         "--echo-strength",
         type=float,
-        default=0.5,
-        help="Echo mix amount 0-1 (default: 0.5)",
+        default=0.8,
+        help="Echo mix amount 0-1 (default: 0.8)",
     )
     parser.add_argument(
         "--echo-delay",
         type=int,
-        default=500,
-        help="Echo delay in samples/bytes (default: 500)",
+        default=2000,
+        help="Echo delay in samples/bytes (default: 2000)",
     )
     parser.add_argument(
         "--chorus",
         type=float,
-        default=0.3,
-        help="Chorus effect amount 0-1 (default: 0.3)",
+        default=0.7,
+        help="Chorus effect amount 0-1 (default: 0.7)",
     )
     parser.add_argument(
         "--bitcrush",

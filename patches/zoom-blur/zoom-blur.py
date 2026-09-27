@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Average copies of the image scaled up about a centre point, for radial warp-speed streaks."""
+"""Average copies of the image scaled up about a center point, for radial warp-speed streaks."""
 
 import argparse
 import os
@@ -21,11 +21,11 @@ def parse_center(value: str) -> tuple[float, float]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Radial zoom blur about a centre point.")
+    parser = argparse.ArgumentParser(description="Radial zoom blur about a center point.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--amount", type=float, default=0.3, help="Zoom strength, 0 to 1; the largest copy is scaled by 1 + amount (default: 0.3)")
-    parser.add_argument("--center", type=parse_center, default=(0.5, 0.5), help="Zoom centre as X,Y fractions (default: 0.5,0.5)")
+    parser.add_argument("--center", type=parse_center, default=(0.5, 0.5), help="Zoom center as X,Y fractions (default: 0.5,0.5)")
     parser.add_argument("--samples", type=int, default=32, help="Number of scaled copies averaged (default: 32)")
     args = parser.parse_args()
 

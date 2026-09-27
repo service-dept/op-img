@@ -40,7 +40,7 @@ class TestHueIsolate:
         assert r.returncode == 0
         assert np.abs(_pixels(out) - _pixels(img)).max() <= 1
 
-    def test_keeps_orange_greys_green(self, run_tool, tmp_path):
+    def test_keeps_orange_grays_green(self, run_tool, tmp_path):
         img = _orange_and_green(str(tmp_path / "two.png"))
         out = str(tmp_path / "pop.png")
         r = run_tool("hue-isolate", "hue-isolate.py", [img, out])

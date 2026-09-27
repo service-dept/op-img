@@ -10,8 +10,8 @@ def _pixels(path: str) -> np.ndarray:
     return np.array(Image.open(path).convert("RGB"), dtype=np.int64)
 
 
-def _solid(path: str, colour: tuple[int, int, int]) -> str:
-    Image.new("RGB", (64, 64), colour).save(path)
+def _solid(path: str, color: tuple[int, int, int]) -> str:
+    Image.new("RGB", (64, 64), color).save(path)
     return path
 
 

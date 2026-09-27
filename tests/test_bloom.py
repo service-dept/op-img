@@ -11,7 +11,7 @@ def _pixels(path: str) -> np.ndarray:
 
 
 def _bright_spot(path: str) -> str:
-    """Dark grey 64x64 with a white 4x4 square in the middle."""
+    """Dark gray 64x64 with a white 4x4 square in the middle."""
     arr = np.full((64, 64, 3), 40, dtype=np.uint8)
     arr[30:34, 30:34] = 255
     Image.fromarray(arr).save(path)

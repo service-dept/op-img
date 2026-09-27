@@ -31,7 +31,7 @@ def main() -> None:
     arr = np.array(img, dtype=np.float64)
     h, w, _ = arr.shape
 
-    # Centred on mid-grey, so mid-tones stay put while light and dark move in opposite directions.
+    # Centered on mid-gray, so mid-tones stay put while light and dark move in opposite directions.
     brightness = gaussian_filter(np.array(img.convert("L"), dtype=np.float64), args.blur) / 255.0 - 0.5
     rad = np.radians(args.angle)
     yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)

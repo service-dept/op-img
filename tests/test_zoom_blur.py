@@ -33,8 +33,8 @@ class TestZoomBlur:
         assert r.returncode == 0
         assert np.abs(_pixels(out) - _pixels(img)).max() <= 1
 
-    def test_edges_blur_more_than_centre(self, run_tool, tmp_workdir):
-        """Streaks grow with distance from the centre."""
+    def test_edges_blur_more_than_center(self, run_tool, tmp_workdir):
+        """Streaks grow with distance from the center."""
         tmp_path, img = tmp_workdir
         out = str(tmp_path / "zoom.png")
         r = run_tool("zoom-blur", "zoom-blur.py", [img, out, "--amount", "1"])

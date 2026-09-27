@@ -41,8 +41,8 @@ def main() -> None:
     parser.add_argument(
         "--grid",
         type=int,
-        default=4,
-        help="Grid size NxN (default: 4)",
+        default=8,
+        help="Grid size NxN (default: 8)",
     )
     parser.add_argument(
         "--seed",
