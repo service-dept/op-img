@@ -5,7 +5,7 @@
 op-img is a composable image manipulation CLI:
 
 ```bash
-op-img <patch> <input> [--args]
+op-img <patch> <input> [output] [--args]
 ```
 
 ## Install
