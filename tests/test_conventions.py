@@ -94,6 +94,15 @@ def test_explicit_output(run_tool, tmp_workdir, name):
 
 
 @pytest.mark.parametrize("name", _patches())
+def test_runs_through_op_img(run_op, tmp_workdir, name):
+    tmp_path, img = tmp_workdir
+    out = str(tmp_path / "through-op-img.png")
+    r = run_op([name, img, out] + REQUIRED_ARGS.get(name, []))
+    assert r.returncode == 0, r.stderr
+    assert_valid_image(out)
+
+
+@pytest.mark.parametrize("name", _patches())
 def test_missing_input(run_tool, name):
     r = run_tool(name, _script(name), ["/nonexistent/image.png"] + REQUIRED_ARGS.get(name, []))
     assert r.returncode == 1
