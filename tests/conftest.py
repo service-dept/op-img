@@ -9,7 +9,8 @@ import pytest
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OP = os.path.join(ROOT, "op-img")
+# The op-img command under test: the clone's script, or an installed copy named by OP_IMG.
+OP = os.environ.get("OP_IMG") or os.path.join(ROOT, "op-img")
 
 
 

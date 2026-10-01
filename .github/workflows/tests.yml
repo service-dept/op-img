@@ -20,3 +20,30 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install . pytest
       - run: python -m pytest -q tests
+
+  # Runs the dispatcher and convention tests against op-img as it is installed: from the
+  # wheel, as pipx installs it, and from the sdist, as Homebrew builds it. A patch the
+  # package leaves out fails here, before a release.
+  installed:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package: wheel
+            file: "*.whl"
+          - package: sdist
+            file: "*.tar.gz"
+    name: installed (${{ matrix.package }})
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install build
+      - run: python -m build
+      - run: python -m venv "$RUNNER_TEMP/venv"
+      - run: $RUNNER_TEMP/venv/bin/pip install dist/${{ matrix.file }} pytest
+      - run: $RUNNER_TEMP/venv/bin/python -m pytest -q tests/test_op_cli.py tests/test_conventions.py
+        env:
+          OP_IMG: ${{ runner.temp }}/venv/bin/op-img
