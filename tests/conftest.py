@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -40,7 +41,7 @@ def run_tool():
     def _run(tool_dir: str, script_name: str, args: list[str], **kwargs) -> subprocess.CompletedProcess:
         script_path = os.path.join(ROOT, "patches", tool_dir, script_name)
         if script_name.endswith(".py"):
-            cmd = ["python3", script_path] + args
+            cmd = [sys.executable, script_path] + args
         else:
             cmd = [script_path] + args
         return subprocess.run(
@@ -58,7 +59,7 @@ def run_op():
     """Run a command through the `op` dispatcher. Returns CompletedProcess."""
     def _run(args: list[str], **kwargs) -> subprocess.CompletedProcess:
         return subprocess.run(
-            [OP] + args,
+            [sys.executable, OP] + args,
             capture_output=True,
             text=True,
             timeout=60,
