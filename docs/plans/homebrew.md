@@ -16,10 +16,14 @@ and runs the formula test on each platform.
   `scipy`, and `pillow`. The Python version must match the bindings shipped by
   those formulae. The original Python 3.12 proposal does not match their current
   Python 3.13/3.14 builds.
-- The virtualenv helper exposes the matching Homebrew dependency paths and
-  installs the `op-img` command. Exclude the three shared packages from
+- The virtualenv uses `python@3.14`'s system site-packages, where the linked
+  `numpy`, `scipy`, and `pillow` kegs install their bindings, and it installs
+  the `op-img` command. Exclude the three shared packages from
   `brew update-python-resources`; no Python runtime resources are needed.
-  The sdist's Hatch build requirements use pip's normal isolated build.
+- The sdist's Hatch build requirements use pip's normal isolated build, so a
+  source install downloads and builds `hatchling` and its dependencies from
+  PyPI. Those are not pinned, and the install needs network access while it
+  builds. Bottles would remove that for users.
 - The formula test lists patches, generates a small PNG using the installed
   virtualenv, runs `bit-crush`, and checks the output pixels. It also runs `swirl`
   to exercise SciPy's native dependency, then verifies both output images.
@@ -48,8 +52,12 @@ brew untap service-dept/op-img-ci
 
 The [`Homebrew` workflow](../../.github/workflows/homebrew.yml) runs these checks
 on `macos-latest` and `ubuntu-latest` when the formula or workflow changes, every
-Monday to catch Homebrew dependency updates, and can also be started manually. It installs the **released sdist**, not the current
-checkout's Python code. The regular test workflow covers the checkout.
+Monday to catch Homebrew dependency updates, and can also be started manually.
+GitHub disables scheduled workflows after 60 days without repository activity;
+re-enable it from the Actions tab if the Monday runs stop. It installs the
+**released sdist**, not the current checkout's Python code. The regular test
+workflow covers the checkout. The local tap has no git history, so `brew audit`
+skips its version and checksum history checks there.
 
 ## Publish the tap
 
@@ -73,6 +81,8 @@ platform checks pass.
    `brew bump-formula-pr --url … service-dept/tap/op-img`.
 4. Run `brew install --build-from-source service-dept/tap/op-img` (or `reinstall`)
    and `brew test op-img` on macOS and Linux.
+5. Run `brew audit --strict service-dept/tap/op-img`. In the real tap it also
+   checks the version and checksum history.
 
 When Homebrew changes Python bindings, update the formula's Python dependency and
 increment its `revision` if the op-img release is unchanged. Re-run the platform

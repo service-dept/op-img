@@ -43,7 +43,7 @@ jobs:
         run: brew style service-dept/op-img-ci/op-img
       - name: Install the released PyPI sdist
         run: brew install --build-from-source service-dept/op-img-ci/op-img
-      - name: Check formula metadata and installed dependencies
+      - name: Audit formula
         run: brew audit --strict service-dept/op-img-ci/op-img
       - name: Test the installed command and image processing
         run: brew test service-dept/op-img-ci/op-img
