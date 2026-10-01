@@ -17,7 +17,7 @@ def res_crush(image: Image.Image, size: int) -> Image.Image:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Pixelate an image by downscaling and upscaling with nearest-neighbor.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Pixelate an image by downscaling and upscaling with nearest-neighbor.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--size", type=int, default=64, help="Longest side of the sampled image in pixels (default: 64)")

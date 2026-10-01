@@ -23,7 +23,7 @@ def channel_swap(image: Image.Image, mapping: str) -> Image.Image:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Rearrange RGB channels of an image.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Rearrange RGB channels of an image.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument(

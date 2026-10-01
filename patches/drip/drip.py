@@ -31,7 +31,7 @@ def unorient(arr: np.ndarray, direction: str) -> np.ndarray:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Drip bright pixels like running paint.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Drip bright pixels like running paint.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--length", type=float, default=500.0, help="Tail length in pixels; 0 leaves the image unchanged (default: 500.0)")

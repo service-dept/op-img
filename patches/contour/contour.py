@@ -23,7 +23,7 @@ def parse_color(value: str) -> tuple[int, int, int]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Topographic contour lines of brightness.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Topographic contour lines of brightness.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--levels", type=int, default=16, help="Number of brightness bands, 2 to 64 (default: 16)")

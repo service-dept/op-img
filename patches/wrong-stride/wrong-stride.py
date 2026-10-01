@@ -29,7 +29,7 @@ def wrong_stride(image: Image.Image, offset: int) -> Image.Image:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Reshape pixel data with wrong stride for diagonal shear effect.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Reshape pixel data with wrong stride for diagonal shear effect.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument(

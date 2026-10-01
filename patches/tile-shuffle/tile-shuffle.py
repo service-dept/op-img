@@ -35,7 +35,7 @@ def tile_shuffle(image: Image.Image, grid: int, seed: Optional[int]) -> Image.Im
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Shuffle tiles of an image in a grid.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Shuffle tiles of an image in a grid.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument(

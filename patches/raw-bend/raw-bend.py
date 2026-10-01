@@ -10,7 +10,7 @@ from PIL import Image
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Raw-bend image data with audio-style effects.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Raw-bend image data with audio-style effects.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument(

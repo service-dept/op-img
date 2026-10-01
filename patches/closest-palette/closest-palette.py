@@ -67,7 +67,7 @@ def snap_to_palette(image: Image.Image, palette: np.ndarray) -> Image.Image:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Snap image pixels to nearest palette color.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Snap image pixels to nearest palette color.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument(

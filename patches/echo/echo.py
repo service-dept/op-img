@@ -10,7 +10,7 @@ from PIL import Image
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Create a ghosting/echo effect by compositing offset faded copies.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Create a ghosting/echo effect by compositing offset faded copies.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--count", type=int, default=12, help="Number of echo copies (default: 12)")

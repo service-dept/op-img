@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw
 
 
 def parse_args():
-    p = argparse.ArgumentParser(description="Generate a stipple pattern from an image.")
+    p = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Generate a stipple pattern from an image.")
     p.add_argument("input", help="Source image path")
     p.add_argument("output", nargs="?", default=None, help="Output image path (default: <input>-stipple.png); formats without transparency, such as JPEG, get a white background")
     p.add_argument("--dots", type=int, default=50000, help="Total dot count (default: 50000)")

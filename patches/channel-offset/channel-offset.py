@@ -46,7 +46,7 @@ def join_pair_values(argv: list[str], options: set[str]) -> list[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Shift RGB channels by independent pixel offsets.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Shift RGB channels by independent pixel offsets.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--r", type=parse_offset, default=(140, 50), help="Red channel offset X,Y in pixels (default: 140,50)")

@@ -103,6 +103,13 @@ def test_runs_through_op_img(run_op, tmp_workdir, name):
 
 
 @pytest.mark.parametrize("name", _patches())
+def test_info_names_the_op_img_command(run_op, name):
+    r = run_op(["--info", name])
+    assert r.returncode == 0
+    assert r.stdout.startswith(f"usage: op-img {name} "), r.stdout.splitlines()[0]
+
+
+@pytest.mark.parametrize("name", _patches())
 def test_missing_input(run_tool, name):
     r = run_tool(name, _script(name), ["/nonexistent/image.png"] + REQUIRED_ARGS.get(name, []))
     assert r.returncode == 1

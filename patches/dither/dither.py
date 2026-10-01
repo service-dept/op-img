@@ -49,7 +49,7 @@ def diffuse(arr: np.ndarray, levels: int, kernel: list[tuple[int, int, float]]) 
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Dither to a few levels per channel.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Dither to a few levels per channel.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--method", choices=["bayer", "floyd", "atkinson"], default="bayer", help="Dithering method (default: bayer)")

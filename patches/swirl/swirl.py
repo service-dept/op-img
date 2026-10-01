@@ -21,7 +21,7 @@ def parse_center(value: str) -> tuple[float, float]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Swirl the image around a center point.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Swirl the image around a center point.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--angle", type=float, default=360.0, help="Rotation at the center in degrees, -1080 to 1080 (default: 360.0)")

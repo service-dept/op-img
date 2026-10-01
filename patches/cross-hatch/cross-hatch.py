@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 
 def parse_args():
-    p = argparse.ArgumentParser(description="Generate a cross-hatch pattern from an image.")
+    p = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Generate a cross-hatch pattern from an image.")
     p.add_argument("input", help="Source image path")
     p.add_argument("output", nargs="?", default=None, help="Output image path (default: <input>-hatch.png); formats without transparency, such as JPEG, get a white background")
     p.add_argument("--layers", type=int, default=3, help="Number of hatch angle passes (default: 3)")

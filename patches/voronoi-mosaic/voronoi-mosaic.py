@@ -14,7 +14,7 @@ LEADING = (20, 20, 20)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Voronoi stained-glass mosaic.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Voronoi stained-glass mosaic.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--size", type=int, default=24, help="Cell spacing in pixels, 1 to 200 (default: 24)")

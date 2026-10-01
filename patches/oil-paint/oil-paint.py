@@ -26,7 +26,7 @@ def window_mean(table: np.ndarray, h: int, w: int, r: int, oy: int, ox: int) -> 
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Oil-paint look with a Kuwahara filter.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Oil-paint look with a Kuwahara filter.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--radius", type=int, default=6, help="Quadrant size in pixels, 0 to 16 (default: 6)")

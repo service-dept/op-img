@@ -29,7 +29,7 @@ def fold(image: Image.Image, axis: str, position: int, mode: str) -> Image.Image
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Fold an image along an axis by mirroring or repeating one half.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Fold an image along an axis by mirroring or repeating one half.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--axis", choices=["x", "y"], default="x", help="Fold axis: x folds at a vertical line, y at a horizontal one (default: x)")

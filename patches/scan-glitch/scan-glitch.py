@@ -35,7 +35,7 @@ def glitch(image: Image.Image, severity: int, rng: np.random.Generator) -> Image
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Apply a scan-glitch effect to an image.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Apply a scan-glitch effect to an image.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument(

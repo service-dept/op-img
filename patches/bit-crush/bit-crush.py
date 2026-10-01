@@ -65,7 +65,7 @@ def bit_crush(image: Image.Image, bits: int) -> Image.Image:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Reduce color depth by posterizing each channel.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Reduce color depth by posterizing each channel.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--bits", type=int, default=1, help="Bits per channel, 1 to 8 (default: 1)")

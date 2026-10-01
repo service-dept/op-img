@@ -25,7 +25,7 @@ def posterize_hsv(image: Image.Image, h_levels: int, s_levels: int, v_levels: in
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Posterize an image by quantizing HSV channels.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Posterize an image by quantizing HSV channels.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument(
