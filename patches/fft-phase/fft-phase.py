@@ -10,7 +10,7 @@ from PIL import Image
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Dissolve an image by randomising its Fourier phase.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Dissolve an image by randomising its Fourier phase.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--amount", type=float, default=0.35, help="Phase randomisation, 0 to 1 (default: 0.35)")

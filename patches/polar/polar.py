@@ -25,7 +25,7 @@ def join_pair_values(argv: list[str], options: set[str]) -> list[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Transform image between Cartesian and polar coordinates.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Transform image between Cartesian and polar coordinates.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument(

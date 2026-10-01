@@ -8,6 +8,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+from op_img import __version__
+
 BANNER = """\
 ░░      ░░░       ░░░        ░░  ░░░░  ░░░      ░░
 ▒  ▒▒▒▒  ▒▒  ▒▒▒▒  ▒▒▒▒▒  ▒▒▒▒▒   ▒▒   ▒▒  ▒▒▒▒▒▒▒
@@ -30,6 +32,12 @@ def patch_script(name: str) -> Path | None:
 
 def all_patches() -> list[str]:
     return sorted(d.name for d in patch_dir().iterdir() if d.is_dir() and patch_script(d.name))
+
+
+def patch_env(script: Path) -> dict[str, str]:
+    """The environment a patch runs in: its parser reads OP_IMG_PROG, so its usage and
+    errors name `op-img <patch>` rather than the script file."""
+    return {**os.environ, "OP_IMG_PROG": f"op-img {script.stem}"}
 
 
 def command(script: Path, args: list[str]) -> list[str]:
@@ -60,13 +68,14 @@ def show_help() -> int:
     print("")
     print("Run 'op-img --list' to see all patches.")
     print("Run 'op-img --info <patch>' to see available args.")
+    print("Run 'op-img --version' to see the version.")
     print("")
     return 0
 
 
 def run(script: Path, args: list[str]) -> int:
     """Run one patch in the foreground, passing its output and exit code through."""
-    return subprocess.run(command(script, args)).returncode
+    return subprocess.run(command(script, args), env=patch_env(script)).returncode
 
 
 def place(src: Path, dest: Path) -> None:
@@ -166,7 +175,8 @@ def stack(args: list[str]) -> int:
                 target.parent.mkdir()
             argv = [str(current_image)] + ([str(target)] if target else []) + opts
             before = {p.name for p in work.iterdir()}
-            result = subprocess.run(command(patch_script(name), argv), capture_output=True, text=True)
+            script = patch_script(name)
+            result = subprocess.run(command(script, argv), env=patch_env(script), capture_output=True, text=True)
             if result.returncode != 0:
                 print(f"Error: step {k} ({name}) failed", file=sys.stderr)
                 sys.stderr.write(result.stderr)
@@ -197,6 +207,9 @@ def main(argv: list[str] | None = None) -> int:
     args = sys.argv[1:] if argv is None else argv
     if not args or args[0] in ("--help", "-h"):
         return show_help()
+    if args[0] == "--version":
+        print(f"op-img {__version__}")
+        return 0
     if args[0] == "--list":
         print("Available patches:")
         for p in all_patches():

@@ -80,7 +80,7 @@ def sort_line(line: np.ndarray, metric_fn, threshold: float) -> np.ndarray:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Pixel-sort an image by brightness, hue, or saturation.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Pixel-sort an image by brightness, hue, or saturation.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument(

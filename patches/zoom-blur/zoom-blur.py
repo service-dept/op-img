@@ -21,7 +21,7 @@ def parse_center(value: str) -> tuple[float, float]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Radial zoom blur about a center point.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Radial zoom blur about a center point.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--amount", type=float, default=0.3, help="Zoom strength, 0 to 1; the largest copy is scaled by 1 + amount (default: 0.3)")

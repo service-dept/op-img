@@ -11,7 +11,7 @@ from scipy.ndimage import gaussian_filter, map_coordinates
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Displace pixels by their own brightness.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Displace pixels by their own brightness.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--amount", type=float, default=150.0, help="Maximum displacement in pixels, 0 to 300 (default: 150.0)")

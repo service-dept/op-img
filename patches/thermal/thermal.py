@@ -40,7 +40,7 @@ def build_thermal_lut() -> np.ndarray:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Apply false-color thermal palette based on brightness.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Apply false-color thermal palette based on brightness.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     args = parser.parse_args()

@@ -31,7 +31,7 @@ def parse_color(value: str) -> tuple[int, int, int]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Keep the bright pixels as a flat color on a transparent background.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Keep the bright pixels as a flat color on a transparent background.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path; formats without transparency, such as JPEG, get a white background")
     parser.add_argument("--threshold", type=float, default=50.0, help="Brightness cutoff as a percentage, 0 to 100 (default: 50)")

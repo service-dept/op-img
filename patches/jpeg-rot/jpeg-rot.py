@@ -10,7 +10,7 @@ from PIL import Image, ImageChops
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generational JPEG loss.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Generational JPEG loss.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--quality", type=int, default=5, help="JPEG quality per generation, 1 to 95 (default: 5)")

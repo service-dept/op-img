@@ -96,7 +96,7 @@ def remove_seam(img: np.ndarray, seam: np.ndarray) -> np.ndarray:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Content-aware seam carving to reduce image width.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Content-aware seam carving to reduce image width.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument(

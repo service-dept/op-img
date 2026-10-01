@@ -11,7 +11,7 @@ from scipy.ndimage import map_coordinates
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Create a kaleidoscope effect by mirroring wedges around center.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Create a kaleidoscope effect by mirroring wedges around center.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--segments", type=int, default=6, help="Number of kaleidoscope segments (default: 6)")

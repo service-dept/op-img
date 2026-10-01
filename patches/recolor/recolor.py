@@ -148,7 +148,7 @@ def parse_colors(value: str) -> list[tuple[int, int, int]]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Repaint the most prevalent colors with the colors you give.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Repaint the most prevalent colors with the colors you give.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--colors", type=parse_colors, default=parse_colors("#1e3a8a,#facc15"),

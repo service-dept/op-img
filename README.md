@@ -86,6 +86,12 @@ Show a patch's options:
 op-img --info pixel-sort
 ```
 
+Show the version:
+
+```bash
+op-img --version
+```
+
 Crush the colors to 1 bit per channel:
 
 ```bash

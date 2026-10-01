@@ -10,7 +10,7 @@ from PIL import Image
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Slit-scan effect via rotated column extraction.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Slit-scan effect via rotated column extraction.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument(

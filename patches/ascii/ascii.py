@@ -21,7 +21,7 @@ def glyph_masks(charset: str, cell: int) -> np.ndarray:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Render the image as colored ASCII characters.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Render the image as colored ASCII characters.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--cell", type=int, default=10, help="Character cell size in pixels, 6 to 32 (default: 10)")

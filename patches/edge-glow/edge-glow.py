@@ -11,7 +11,7 @@ from scipy.ndimage import gaussian_filter, sobel
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Glowing neon edges.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Glowing neon edges.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--amount", type=float, default=1.0, help="Blend from the photo (0) to glowing edges on black (1) (default: 1.0)")

@@ -20,7 +20,7 @@ def invert_lightness(image: Image.Image) -> Image.Image:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Invert the lightness channel of an image in LAB color space.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Invert the lightness channel of an image in LAB color space.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     args = parser.parse_args()

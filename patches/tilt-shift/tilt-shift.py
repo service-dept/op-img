@@ -12,7 +12,7 @@ LEVELS = 8
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Fake miniature with a tilt-shift blur.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Fake miniature with a tilt-shift blur.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--blur", type=float, default=10.0, help="Largest blur radius, 0 to 40 (default: 10.0)")

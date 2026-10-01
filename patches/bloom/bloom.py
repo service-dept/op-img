@@ -11,7 +11,7 @@ from scipy.ndimage import gaussian_filter
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Highlight bloom and halation.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Highlight bloom and halation.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--amount", type=float, default=2.0, help="Glow strength, 0 to 2 (default: 2.0)")

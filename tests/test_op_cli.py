@@ -1,6 +1,7 @@
 """Tests for the `op-img` dispatcher."""
 
 import os
+import re
 
 import numpy as np
 import pytest
@@ -26,6 +27,16 @@ class TestHelp:
         r = run_op(["--help"])
         assert r.returncode == 0
         assert "Usage:" in r.stdout
+
+    def test_version_flag(self, run_op):
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        version = re.search(r'__version__ = "(.+)"', open(os.path.join(root, "op_img", "__init__.py")).read())[1]
+        r = run_op(["--version"])
+        assert r.returncode == 0
+        assert r.stdout == f"op-img {version}\n"
+
+    def test_help_mentions_version(self, run_op):
+        assert "op-img --version" in run_op([]).stdout
 
     def test_h_flag(self, run_op):
         r = run_op(["-h"])
@@ -145,6 +156,12 @@ class TestStack:
         assert r.returncode == 1
         assert "unknown patch 'nonexistent'" in r.stderr
         assert [p.name for p in tmp_path.iterdir()] == ["input.png"]
+
+    def test_failing_step_shows_op_img_usage(self, run_op, tmp_workdir):
+        tmp_path, img = tmp_workdir
+        r = run_op(["pixel-sort", img, "+", "pixel-sort", "--direction", "sideways"])
+        assert "usage: op-img pixel-sort " in r.stderr
+        assert "pixel-sort.py" not in r.stderr
 
     def test_failing_step_names_it_and_writes_nothing(self, run_op, tmp_workdir):
         tmp_path, img = tmp_workdir

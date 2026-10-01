@@ -11,7 +11,7 @@ from scipy.ndimage import gaussian_filter, map_coordinates, sobel
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Brush strokes that follow the image's contours.")
+    parser = argparse.ArgumentParser(prog=os.environ.get("OP_IMG_PROG"), description="Brush strokes that follow the image's contours.")
     parser.add_argument("input", help="Input image path")
     parser.add_argument("output", nargs="?", default=None, help="Output image path")
     parser.add_argument("--length", type=int, default=36, help="Steps traced each way along the flow, 0 to 40 (default: 36)")
