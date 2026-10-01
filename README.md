@@ -26,7 +26,7 @@ Either one puts the `op-img` command on your PATH, along with Pillow, numpy and 
 
 ### From source
 
-To work on op-img itself, run it from a clone instead. Clone the repository:
+To work on op-img itself, install it from a clone instead. Clone the repository:
 
 ```bash
 git clone https://github.com/service-dept/op-img.git
@@ -38,17 +38,25 @@ Move into it:
 cd op-img
 ```
 
-Install Pillow, numpy and scipy for Python 3.10 or later:
+Create a virtual environment for Python 3.10 or later:
 
 ```bash
-pip3 install Pillow numpy scipy
+python3 -m venv .venv
 ```
 
-Link `op-img` onto your PATH, so your edits take effect wherever you run it. This may need `sudo`:
+Activate it:
 
 ```bash
-ln -s "$(pwd)/op-img" /usr/local/bin/op-img
+source .venv/bin/activate
 ```
+
+Install op-img from the clone, with the test dependencies:
+
+```bash
+pip install -e '.[test]'
+```
+
+While the environment is active, `op-img` runs the clone's code, so your edits take effect immediately. Run the tests with `python -m pytest`.
 
 ## Quick start
 

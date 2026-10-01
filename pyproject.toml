@@ -34,6 +34,8 @@ path = "op_img/__init__.py"
 [tool.hatch.build.targets.wheel]
 include = ["op_img", "patches/*/*.py", "patches/*/*.sh", "patches/*/requirements.txt"]
 sources = { "patches" = "op_img/patches" }
+# The remap above rules out an editable install's usual detection, so `pip install -e .` puts the clone on sys.path instead.
+dev-mode-dirs = ["."]
 
 [tool.hatch.build.targets.sdist]
 include = ["op_img", "patches/*/*.py", "patches/*/*.sh", "patches/*/requirements.txt", "tests", "op-img", "README.md", "LICENSE"]
