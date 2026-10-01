@@ -8,21 +8,25 @@ op-img is a composable image manipulation CLI:
 op-img <patch> <input> [--args]
 ```
 
-## Quick start
+## Install
 
-Install op-img with [pipx](https://pipx.pypa.io/), which also installs Pillow, numpy and scipy:
+Install op-img with [pipx](https://pipx.pypa.io/):
 
 ```bash
 pipx install op-img
 ```
 
-Or, on macOS or Linux, install it with [Homebrew](https://brew.sh/), which brings its own Python and libraries:
+Or, on macOS or Linux, with [Homebrew](https://brew.sh/):
 
 ```bash
 brew install service-dept/tap/op-img
 ```
 
-Or run it from a clone. Clone the repository:
+Either one puts the `op-img` command on your PATH, along with Pillow, numpy and scipy.
+
+### From source
+
+To work on op-img itself, run it from a clone instead. Clone the repository:
 
 ```bash
 git clone https://github.com/service-dept/op-img.git
@@ -34,24 +38,44 @@ Move into it:
 cd op-img
 ```
 
-Install Python3 with Pillow, numpy and scipy:
+Install Pillow, numpy and scipy for Python 3.10 or later:
 
 ```bash
 pip3 install Pillow numpy scipy
 ```
 
-Add `op-img` to your PATH (one-time setup, from the `op-img` folder):
+Link `op-img` onto your PATH, so your edits take effect wherever you run it. This may need `sudo`:
 
 ```bash
 ln -s "$(pwd)/op-img" /usr/local/bin/op-img
 ```
 
-Use it from anywhere on your machine.
+## Quick start
+
+Every command names a patch, then the input image, then an optional output, then the patch's options:
+
+```bash
+op-img <patch> <input> [output] [--args]
+```
+
+Without an output, op-img saves the result next to the input, with the patch's suffix added to the name.
 
 Show the usage and three patches at random:
 
 ```bash
 op-img
+```
+
+List every patch:
+
+```bash
+op-img --list
+```
+
+Show a patch's options:
+
+```bash
+op-img --info pixel-sort
 ```
 
 Crush the colors to 1 bit per channel:
@@ -78,7 +102,7 @@ Snap every pixel to black, white or red:
 op-img closest-palette photo.jpg --palette "#000,#fff,#f00"
 ```
 
-The input comes first, then an optional output. Omit the output to save the result next to the input with the patch's suffix.
+To run several patches in a row, see Stacking patches below.
 
 ## Patches
 
@@ -91,7 +115,7 @@ All examples below use this image as input:
 Reduce color depth to N bits per channel, with a light dither that leaves flat, saturated blotches.
 
 ```bash
-python3 ./patches/bit-crush/bit-crush.py <input> [output] [--bits N]
+op-img bit-crush <input> [output] [--bits N]
 ```
 
 Default: `--bits 1` (2 levels per channel, 8 colors)
@@ -103,7 +127,7 @@ Default: `--bits 1` (2 levels per channel, 8 colors)
 Downscale to a tiny resolution and upscale back with nearest-neighbor for a chunky pixel look.
 
 ```bash
-python3 ./patches/res-crush/res-crush.py <input> [output] [--size N]
+op-img res-crush <input> [output] [--size N]
 ```
 
 Default: `--size 64`
@@ -115,7 +139,7 @@ Default: `--size 64`
 Shift R, G, B channels by independent pixel amounts for a misregistered print / chromatic aberration look.
 
 ```bash
-python3 ./patches/channel-offset/channel-offset.py <input> [output] [--r X,Y] [--g X,Y] [--b X,Y]
+op-img channel-offset <input> [output] [--r X,Y] [--g X,Y] [--b X,Y]
 ```
 
 Default: `--r 140,50 --g -20,40 --b -120,-40`
@@ -127,7 +151,7 @@ Default: `--r 140,50 --g -20,40 --b -120,-40`
 Mirror or repeat one half of the image across a fold line.
 
 ```bash
-python3 ./patches/fold/fold.py <input> [output] [--axis x|y] [--position N] [--mode mirror|repeat]
+op-img fold <input> [output] [--axis x|y] [--position N] [--mode mirror|repeat]
 ```
 
 Default: `--axis x --position center --mode mirror`
@@ -139,7 +163,7 @@ Default: `--axis x --position center --mode mirror`
 Sort contiguous runs of pixels by brightness, hue, or saturation.
 
 ```bash
-python3 ./patches/pixel-sort/pixel-sort.py <input> [output] [--by brightness|hue|saturation] [--threshold N] [--direction row|column]
+op-img pixel-sort <input> [output] [--by brightness|hue|saturation] [--threshold N] [--direction row|column]
 ```
 
 Default: `--threshold 200`
@@ -151,7 +175,7 @@ Default: `--threshold 200`
 Randomly shift horizontal slices of the image for a broken-signal effect.
 
 ```bash
-python3 ./patches/scan-glitch/scan-glitch.py <input> [output] [--severity N] [--seed N]
+op-img scan-glitch <input> [output] [--severity N] [--seed N]
 ```
 
 ![scan-glitch example](patches/scan-glitch/example.jpg)
@@ -161,7 +185,7 @@ python3 ./patches/scan-glitch/scan-glitch.py <input> [output] [--severity N] [--
 Composite the image on itself with offset and fade for a ghosting/echo effect.
 
 ```bash
-python3 ./patches/echo/echo.py <input> [output] [--count N] [--offset-x N] [--offset-y N] [--decay N] [--blend additive|screen|multiply]
+op-img echo <input> [output] [--count N] [--offset-x N] [--offset-y N] [--decay N] [--blend additive|screen|multiply]
 ```
 
 Default: `--count 12 --offset-x 30 --offset-y 12 --decay 0.6 --blend additive`
@@ -173,7 +197,7 @@ Default: `--count 12 --offset-x 30 --offset-y 12 --decay 0.6 --blend additive`
 Extract a wedge from the image and mirror/rotate it around the center for a kaleidoscope effect.
 
 ```bash
-python3 ./patches/kaleidoscope/kaleidoscope.py <input> [output] [--segments N] [--angle N]
+op-img kaleidoscope <input> [output] [--segments N] [--angle N]
 ```
 
 Default: `--segments 6 --angle 90`
@@ -185,7 +209,7 @@ Default: `--segments 6 --angle 90`
 Remap image between Cartesian and polar coordinates. `--center` moves the pole, `--rotate` turns where the seam falls, and `--radius` sets how far out the rings reach. Use the same values for `to-polar` and `from-polar` to map back.
 
 ```bash
-python3 ./patches/polar/polar.py <input> [output] [--mode to-polar|from-polar] [--center X,Y] [--rotate DEG] [--radius N]
+op-img polar <input> [output] [--mode to-polar|from-polar] [--center X,Y] [--rotate DEG] [--radius N]
 ```
 
 Default: `--mode to-polar --center 0.5,0.5 --rotate 0 --radius 1`
@@ -197,7 +221,7 @@ Default: `--mode to-polar --center 0.5,0.5 --rotate 0 --radius 1`
 Treat pixel data as a raw audio signal and apply echo, chorus, and bitcrush distortion.
 
 ```bash
-python3 ./patches/raw-bend/raw-bend.py <input> [output] [--echo-strength N] [--echo-delay N] [--chorus N] [--bitcrush N]
+op-img raw-bend <input> [output] [--echo-strength N] [--echo-delay N] [--chorus N] [--bitcrush N]
 ```
 
 Default: `--echo-strength 0.8 --echo-delay 2000 --chorus 0.7 --bitcrush 0`
@@ -209,7 +233,7 @@ Default: `--echo-strength 0.8 --echo-delay 2000 --chorus 0.7 --bitcrush 0`
 Content-aware image resizing by removing low-energy vertical seams.
 
 ```bash
-python3 ./patches/seam-carve/seam-carve.py <input> [output] [--percent N] [--energy gradient|sobel]
+op-img seam-carve <input> [output] [--percent N] [--energy gradient|sobel]
 ```
 
 Default: `--percent 35 --energy sobel`
@@ -221,7 +245,7 @@ Default: `--percent 35 --energy sobel`
 Take one column from each rotation of the image and stitch them together for a slit-scan effect.
 
 ```bash
-python3 ./patches/slit-scan/slit-scan.py <input> [output] [--slits N] [--max-angle N]
+op-img slit-scan <input> [output] [--slits N] [--max-angle N]
 ```
 
 Default: `--slits <width> --max-angle 180`
@@ -233,7 +257,7 @@ Default: `--slits <width> --max-angle 180`
 Chop the image into an NxN grid and randomly permute the tiles.
 
 ```bash
-python3 ./patches/tile-shuffle/tile-shuffle.py <input> [output] [--grid N] [--seed N]
+op-img tile-shuffle <input> [output] [--grid N] [--seed N]
 ```
 
 Default: `--grid 8`
@@ -245,7 +269,7 @@ Default: `--grid 8`
 Flatten the pixel buffer and reshape with a wrong row width for a diagonal shear glitch.
 
 ```bash
-python3 ./patches/wrong-stride/wrong-stride.py <input> [output] [--offset N]
+op-img wrong-stride <input> [output] [--offset N]
 ```
 
 Default: `--offset 1`
@@ -257,7 +281,7 @@ Default: `--offset 1`
 Keep each channel's Fourier magnitude and blend in random phase, so the image dissolves into a texture with the same spectrum.
 
 ```bash
-python3 ./patches/fft-phase/fft-phase.py <input> [output] [--amount N] [--seed N]
+op-img fft-phase <input> [output] [--amount N] [--seed N]
 ```
 
 Default: `--amount 0.35`
@@ -269,7 +293,7 @@ Default: `--amount 0.35`
 Average copies of the image scaled up about a center point, for radial warp-speed streaks.
 
 ```bash
-python3 ./patches/zoom-blur/zoom-blur.py <input> [output] [--amount N] [--center X,Y] [--samples N]
+op-img zoom-blur <input> [output] [--amount N] [--center X,Y] [--samples N]
 ```
 
 Default: `--amount 0.3 --center 0.5,0.5 --samples 32`
@@ -281,7 +305,7 @@ Default: `--amount 0.3 --center 0.5,0.5 --samples 32`
 Twist the image around a center, with the rotation fading out toward a radius.
 
 ```bash
-python3 ./patches/swirl/swirl.py <input> [output] [--angle DEG] [--radius N] [--center X,Y]
+op-img swirl <input> [output] [--angle DEG] [--radius N] [--center X,Y]
 ```
 
 Default: `--angle 360 --radius 1.0 --center 0.5,0.5`
@@ -293,7 +317,7 @@ Default: `--angle 360 --radius 1.0 --center 0.5,0.5`
 Move each pixel along an angle by an amount taken from its own blurred brightness, so light and dark areas tear apart in opposite directions.
 
 ```bash
-python3 ./patches/displace/displace.py <input> [output] [--amount PX] [--angle DEG] [--blur N]
+op-img displace <input> [output] [--amount PX] [--angle DEG] [--blur N]
 ```
 
 Default: `--amount 150 --angle 0 --blur 3`
@@ -305,7 +329,7 @@ Default: `--amount 150 --angle 0 --blur 3`
 Bleed bright pixels in one direction with a fading tail, like wet paint running.
 
 ```bash
-python3 ./patches/drip/drip.py <input> [output] [--length PX] [--threshold N] [--direction down|up|left|right]
+op-img drip <input> [output] [--length PX] [--threshold N] [--direction down|up|left|right]
 ```
 
 Default: `--length 500 --threshold 120 --direction down`
@@ -317,7 +341,7 @@ Default: `--length 500 --threshold 120 --direction down`
 Turn edges into neon lines in each pixel's own hue, with a soft halo, over a darkened base.
 
 ```bash
-python3 ./patches/edge-glow/edge-glow.py <input> [output] [--amount N] [--radius N]
+op-img edge-glow <input> [output] [--amount N] [--radius N]
 ```
 
 Default: `--amount 1 --radius 6`
@@ -329,7 +353,7 @@ Default: `--amount 1 --radius 6`
 Draw lines where brightness crosses N levels, like a topographic map of the photo. Pink lines on black by default.
 
 ```bash
-python3 ./patches/contour/contour.py <input> [output] [--levels N] [--blur N] [--width PX] [--color HEX] [--amount N]
+op-img contour <input> [output] [--levels N] [--blur N] [--width PX] [--color HEX] [--amount N]
 ```
 
 Default: `--levels 16 --blur 2 --width 1 --color #ec4899 --amount 1`
@@ -341,7 +365,7 @@ Default: `--levels 16 --blur 2 --width 1 --color #ec4899 --amount 1`
 Pull out the highlights, blur them at three radii and screen them back for a soft glow.
 
 ```bash
-python3 ./patches/bloom/bloom.py <input> [output] [--amount N] [--threshold N] [--radius N]
+op-img bloom <input> [output] [--amount N] [--threshold N] [--radius N]
 ```
 
 Default: `--amount 2 --threshold 110 --radius 16`
@@ -353,7 +377,7 @@ Default: `--amount 2 --threshold 110 --radius 16`
 Split the image into irregular Voronoi cells filled with their average color, with optional dark leading like stained glass.
 
 ```bash
-python3 ./patches/voronoi-mosaic/voronoi-mosaic.py <input> [output] [--size PX] [--jitter N] [--edges PX] [--seed N]
+op-img voronoi-mosaic <input> [output] [--size PX] [--jitter N] [--edges PX] [--seed N]
 ```
 
 Default: `--size 24 --jitter 1 --edges 0`
@@ -365,7 +389,7 @@ Default: `--size 24 --jitter 1 --edges 0`
 Kuwahara filter: smooth into flat painterly patches while keeping edges crisp.
 
 ```bash
-python3 ./patches/oil-paint/oil-paint.py <input> [output] [--radius N]
+op-img oil-paint <input> [output] [--radius N]
 ```
 
 Default: `--radius 6`
@@ -377,7 +401,7 @@ Default: `--radius 6`
 Blur away from a horizontal focus band and lift the color, so the scene looks like a miniature.
 
 ```bash
-python3 ./patches/tilt-shift/tilt-shift.py <input> [output] [--blur N] [--focus N] [--band N]
+op-img tilt-shift <input> [output] [--blur N] [--focus N] [--band N]
 ```
 
 Default: `--blur 10 --focus 0.62 --band 0.25`
@@ -389,7 +413,7 @@ Default: `--blur 10 --focus 0.62 --band 0.25`
 Smear the image along its own contours for brushed, combed strokes.
 
 ```bash
-python3 ./patches/flow-streak/flow-streak.py <input> [output] [--length N] [--sigma N]
+op-img flow-streak <input> [output] [--length N] [--sigma N]
 ```
 
 Default: `--length 36 --sigma 6`
@@ -401,7 +425,7 @@ Default: `--length 36 --sigma 6`
 Dither to N levels per channel with a Bayer matrix, or with Floyd–Steinberg or Atkinson error diffusion. Error diffusion takes a few seconds on the README image.
 
 ```bash
-python3 ./patches/dither/dither.py <input> [output] [--method bayer|floyd|atkinson] [--levels N] [--matrix 2|4|8]
+op-img dither <input> [output] [--method bayer|floyd|atkinson] [--levels N] [--matrix 2|4|8]
 ```
 
 Default: `--method bayer --levels 2 --matrix 8`
@@ -413,7 +437,7 @@ Default: `--method bayer --levels 2 --matrix 8`
 Re-save as a low-quality JPEG many times, shifting a pixel each time so the damage piles up instead of settling.
 
 ```bash
-python3 ./patches/jpeg-rot/jpeg-rot.py <input> [output] [--quality N] [--generations N]
+op-img jpeg-rot <input> [output] [--quality N] [--generations N]
 ```
 
 Default: `--quality 5 --generations 80`
@@ -425,7 +449,7 @@ Default: `--quality 5 --generations 80`
 Replace each cell with a bold character chosen by brightness, stretched to the image's own range, drawn in the cell's hue on black.
 
 ```bash
-python3 ./patches/ascii/ascii.py <input> [output] [--cell PX] [--charset CHARS]
+op-img ascii <input> [output] [--cell PX] [--charset CHARS]
 ```
 
 Default: `--cell 10 --charset " .:-=+*#%@"`
@@ -437,7 +461,7 @@ Default: `--cell 10 --charset " .:-=+*#%@"`
 Keep the pixels brighter than a threshold as a flat color on a transparent background, optionally upscaled with nearest-neighbor. The default output is PNG; a JPEG output gets a white background.
 
 ```bash
-python3 ./patches/isolate-threshold/isolate-threshold.py <input> [output] [--threshold N] [--color "#hex"] [--scale N]
+op-img isolate-threshold <input> [output] [--threshold N] [--color "#hex"] [--scale N]
 ```
 
 Default: `--threshold 50 --color "#ff0000" --scale 1`
@@ -449,8 +473,8 @@ Default: `--threshold 50 --color "#ff0000" --scale 1`
 Snap every pixel to its nearest color in a given palette. No dithering -- hard color boundaries.
 
 ```bash
-python3 ./patches/closest-palette/closest-palette.py <input> [output] --palette "#hex,#hex,..."
-python3 ./patches/closest-palette/closest-palette.py <input> [output] --from-image ref.png --colors N
+op-img closest-palette <input> [output] --palette "#hex,#hex,..."
+op-img closest-palette <input> [output] --from-image ref.png --colors N
 ```
 
 ![closest-palette example](patches/closest-palette/example.jpg)
@@ -460,7 +484,7 @@ python3 ./patches/closest-palette/closest-palette.py <input> [output] --from-ima
 Invert the lightness channel in LAB color space — dark becomes light and vice versa, while hue and saturation are preserved.
 
 ```bash
-python3 ./patches/invert-lightness/invert-lightness.py <input> [output]
+op-img invert-lightness <input> [output]
 ```
 
 ![invert-lightness example](patches/invert-lightness/example.jpg)
@@ -470,7 +494,7 @@ python3 ./patches/invert-lightness/invert-lightness.py <input> [output]
 Quantize HSV channels independently for a posterized look with hue control.
 
 ```bash
-python3 ./patches/posterize-hsv/posterize-hsv.py <input> [output] [--h-levels N] [--s-levels N] [--v-levels N]
+op-img posterize-hsv <input> [output] [--h-levels N] [--s-levels N] [--v-levels N]
 ```
 
 Default: `--h-levels 8 --s-levels 4 --v-levels 4`
@@ -482,7 +506,7 @@ Default: `--h-levels 8 --s-levels 4 --v-levels 4`
 Map brightness to a false-color thermal palette (black to blue to red to yellow to white).
 
 ```bash
-python3 ./patches/thermal/thermal.py <input> [output]
+op-img thermal <input> [output]
 ```
 
 ![thermal example](patches/thermal/example.jpg)
@@ -492,7 +516,7 @@ python3 ./patches/thermal/thermal.py <input> [output]
 Keep one hue band in full color and turn everything else gray.
 
 ```bash
-python3 ./patches/hue-isolate/hue-isolate.py <input> [output] [--hue DEG] [--width DEG] [--amount N]
+op-img hue-isolate <input> [output] [--hue DEG] [--width DEG] [--amount N]
 ```
 
 Default: `--hue 25 --width 20 --amount 1` (orange)
@@ -504,7 +528,7 @@ Default: `--hue 25 --width 20 --amount 1` (orange)
 Rearrange RGB channels — swap, duplicate, or reorder color channels.
 
 ```bash
-python3 ./patches/channel-swap/channel-swap.py <input> [output] [--map B,G,R]
+op-img channel-swap <input> [output] [--map B,G,R]
 ```
 
 Default: `--map B,G,R` (swaps red and blue)
@@ -516,7 +540,7 @@ Default: `--map B,G,R` (swaps red and blue)
 Repaint the image's most prevalent colors with the colors you give, most prevalent first, keeping their light and shade. Grays, black and white are left alone.
 
 ```bash
-python3 ./patches/recolor/recolor.py <input> [output] [--colors C1,C2] [--amount N] [--clusters N]
+op-img recolor <input> [output] [--colors C1,C2] [--amount N] [--clusters N]
 ```
 
 Default: `--colors "#1e3a8a,#facc15" --amount 1 --clusters 6`
@@ -528,7 +552,7 @@ Default: `--colors "#1e3a8a,#facc15" --amount 1 --clusters 6`
 Convert to a halftone dot grid where dot size varies with brightness. Pink dots on transparent background.
 
 ```bash
-python3 ./patches/dot-halftone/dot-halftone.py <input> [output] [--spacing N] [--min-dot N] [--max-dot N] [--angle N]
+op-img dot-halftone <input> [output] [--spacing N] [--min-dot N] [--max-dot N] [--angle N]
 ```
 
 ![dot-halftone example](patches/dot-halftone/example.jpg)
@@ -538,7 +562,7 @@ python3 ./patches/dot-halftone/dot-halftone.py <input> [output] [--spacing N] [-
 Variable-width lines whose thickness maps to brightness. Pink lines on transparent background.
 
 ```bash
-python3 ./patches/line-halftone/line-halftone.py <input> [output] [--spacing N] [--min-width N] [--max-width N] [--angle N]
+op-img line-halftone <input> [output] [--spacing N] [--min-width N] [--max-width N] [--angle N]
 ```
 
 ![line-halftone example](patches/line-halftone/example.jpg)
@@ -548,7 +572,7 @@ python3 ./patches/line-halftone/line-halftone.py <input> [output] [--spacing N] 
 Multiple line-halftone passes at different angles, each gated by a brightness threshold. Darker areas get more layers of hatching. Pink lines on transparent background.
 
 ```bash
-python3 ./patches/cross-hatch/cross-hatch.py <input> [output] [--layers N] [--spacing N] [--thresholds N,N,N]
+op-img cross-hatch <input> [output] [--layers N] [--spacing N] [--thresholds N,N,N]
 ```
 
 ![cross-hatch example](patches/cross-hatch/example.jpg)
@@ -558,7 +582,7 @@ python3 ./patches/cross-hatch/cross-hatch.py <input> [output] [--layers N] [--sp
 Random dot placement where density maps to brightness. Pink dots on transparent background.
 
 ```bash
-python3 ./patches/stipple/stipple.py <input> [output] [--dots N] [--dot-size N] [--seed N]
+op-img stipple <input> [output] [--dots N] [--dot-size N] [--seed N]
 ```
 
 ![stipple example](patches/stipple/example.jpg)
