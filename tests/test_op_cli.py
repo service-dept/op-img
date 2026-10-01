@@ -53,6 +53,10 @@ class TestHelp:
         assert r.returncode == 0
         assert "Usage:" in r.stdout
 
+    def test_usage_shows_optional_output(self, run_op):
+        r = run_op([])
+        assert "Usage: op-img <patch> <input> [output] [--args]" in r.stdout
+
     def test_no_args_shows_three_patches(self, run_op):
         r = run_op([])
         patch_lines = [l for l in r.stdout.splitlines() if l.startswith("  ") and l.strip() in ALL_PATCHES]

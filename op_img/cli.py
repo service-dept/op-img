@@ -54,7 +54,7 @@ def show_help() -> int:
     print("")
     print(BANNER)
     print("")
-    print("Usage: op-img <patch> <input> [--args]")
+    print("Usage: op-img <patch> <input> [output] [--args]")
     print("       op-img <patch> <input> [output] [--args] + <patch> [--args] ...")
     print("")
     print(f"Patches (3 of {len(patches)}):")
