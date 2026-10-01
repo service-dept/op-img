@@ -1,8 +1,9 @@
 """Conventions every patch keeps, checked once for the whole rack.
 
 Each patch's own test file covers what is particular to it (its effect, its
-options, its edge cases). Adding a patch means adding its default output name
-here and its name to ALL_PATCHES in test_op_cli.py.
+options, its edge cases). Every directory in patches/ is checked; adding a patch
+means adding its default output name to DEFAULT_NAMES here, and its required
+options, if any, to REQUIRED_ARGS.
 """
 
 import ast
@@ -10,7 +11,7 @@ import os
 
 import pytest
 
-from conftest import assert_valid_image
+from conftest import ROOT, assert_valid_image
 from test_op_cli import ALL_PATCHES
 
 # The name each patch gives its output when none is passed, for an input called input.png.
@@ -135,3 +136,16 @@ def test_every_option_takes_one_value(name):
         action = keywords.get("action")
         assert not (isinstance(action, ast.Constant) and action.value in NO_SINGLE_VALUE), f"{flags} takes no value"
         assert "nargs" not in keywords, f"{flags} sets nargs"
+
+
+@pytest.mark.parametrize("name", _patches())
+def test_patch_directory_holds_its_script_and_images(name):
+    folder = os.path.join(ROOT, "patches", name)
+    extra = [f for f in os.listdir(folder) if f != _script(name) and not f.endswith(".jpg")]
+    assert extra == [], f"patches/{name} holds {extra}; dependencies go in pyproject.toml"
+
+
+@pytest.mark.parametrize("name", _patches())
+def test_patch_script_is_executable(name):
+    # Every patch script starts with a #! line, so it can be run directly.
+    assert os.access(os.path.join(ROOT, "patches", name, _script(name)), os.X_OK)

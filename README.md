@@ -777,7 +777,12 @@ op-img pixel-sort photo.jpg --direction column + drip --length 500 --threshold 1
 
 ## Adding a patch
 
-A patch is a directory in `patches/`, named after the patch. It holds either a Python script with its `requirements.txt`, or a shell script. `op-img` finds patches by name, so there's nothing to register. A missing input prints `Error: file not found`. Its own tests go in `tests/test_<name>.py`. The name goes in `ALL_PATCHES` in `tests/test_op_cli.py`, and its default output name in `DEFAULT_NAMES` in `tests/test_conventions.py`, which checks the shared conventions for every patch.
+A patch is a directory in `patches/`, named after the patch, holding a Python script of the same name and its example images. `op-img` finds patches by name, and the tests check every directory in `patches/`, so there's nothing to register. To add one:
+
+1. Write `patches/<name>/<name>.py`. It takes an input and an optional output, prints `Error: file not found` for a missing input, and saves next to the input with its own suffix when no output is given. Every option takes exactly one value.
+2. Add its default output name to `DEFAULT_NAMES` in `tests/test_conventions.py`, and its required options, if it has any, to `REQUIRED_ARGS`. Those tests check the shared conventions for every patch.
+3. Put the tests particular to it in `tests/test_<name>.py`.
+4. If it needs a library op-img doesn't already depend on, add it to `dependencies` in `pyproject.toml` and as a `depends_on` or resource in `Formula/op-img.rb`.
 
 ## License
 

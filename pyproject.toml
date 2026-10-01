@@ -32,13 +32,13 @@ path = "op_img/__init__.py"
 
 # The wheel carries the dispatcher and every patch's script, but not the example images.
 [tool.hatch.build.targets.wheel]
-include = ["op_img", "patches/*/*.py", "patches/*/*.sh", "patches/*/requirements.txt"]
+include = ["op_img", "patches/*/*.py"]
 sources = { "patches" = "op_img/patches" }
 # The remap above rules out an editable install's usual detection, so `pip install -e .` puts the clone on sys.path instead.
 dev-mode-dirs = ["."]
 
 [tool.hatch.build.targets.sdist]
-include = ["op_img", "patches/*/*.py", "patches/*/*.sh", "patches/*/requirements.txt", "tests", "op-img", "README.md", "LICENSE"]
+include = ["op_img", "patches/*/*.py", "tests", "op-img", "README.md", "LICENSE"]
 
 # PyPI can't resolve the README's relative image paths, so point them at GitHub.
 [tool.hatch.metadata.hooks.fancy-pypi-readme]

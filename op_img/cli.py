@@ -24,11 +24,8 @@ def patch_dir() -> Path:
 
 def patch_script(name: str) -> Path | None:
     """The script that runs a patch, or None if there is no such patch."""
-    for ext in (".sh", ".py"):
-        script = patch_dir() / name / f"{name}{ext}"
-        if script.is_file():
-            return script
-    return None
+    script = patch_dir() / name / f"{name}.py"
+    return script if script.is_file() else None
 
 
 def all_patches() -> list[str]:
@@ -36,8 +33,8 @@ def all_patches() -> list[str]:
 
 
 def command(script: Path, args: list[str]) -> list[str]:
-    # Python patches run on this interpreter, which is the one with op-img's dependencies.
-    return [str(script)] + args if script.suffix == ".sh" else [sys.executable, str(script)] + args
+    # Patches run on this interpreter, which is the one with op-img's dependencies.
+    return [sys.executable, str(script)] + args
 
 
 def unknown_patch(name: str) -> int:

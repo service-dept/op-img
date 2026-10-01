@@ -1,4 +1,4 @@
-"""Tests for the `op` CLI dispatcher."""
+"""Tests for the `op-img` dispatcher."""
 
 import os
 
@@ -8,32 +8,11 @@ from PIL import Image
 
 from conftest import _make_gradient, assert_valid_image
 
-ALL_PATCHES = [
-    "bit-crush", "channel-offset", "channel-swap",
-    "closest-palette", "cross-hatch", "dot-halftone", "echo",
-    "fold", "invert-lightness", "isolate-threshold",
-    "kaleidoscope", "line-halftone", "pixel-sort", "polar",
-    "posterize-hsv", "raw-bend", "res-crush", "scan-glitch", "seam-carve",
-    "slit-scan", "stipple", "thermal", "tile-shuffle",
-    "wrong-stride",
-    "fft-phase",
-    "zoom-blur",
-    "swirl",
-    "displace",
-    "drip",
-    "edge-glow",
-    "contour",
-    "hue-isolate",
-    "bloom",
-    "voronoi-mosaic",
-    "oil-paint",
-    "tilt-shift",
-    "flow-streak",
-    "dither",
-    "jpeg-rot",
-    "ascii",
-    "recolor",
-]
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Every directory in patches/ is a patch, so a new one is tested without registering it.
+ALL_PATCHES = sorted(d for d in os.listdir(os.path.join(ROOT, "patches"))
+                     if os.path.isdir(os.path.join(ROOT, "patches", d)) and not d.startswith((".", "_")))
 
 
 class TestHelp:
@@ -66,11 +45,6 @@ class TestHelp:
         r = run_op(["--info", "scan-glitch"])
         assert r.returncode == 0
         assert "--severity" in r.stdout
-
-    def test_info_shell_patch(self, run_op):
-        r = run_op(["--info", "fold"])
-        assert r.returncode == 0
-        assert "--axis" in r.stdout
 
     def test_info_unknown_patch(self, run_op):
         r = run_op(["--info", "nonexistent"])
@@ -286,3 +260,12 @@ class TestLayout:
         for name in ALL_PATCHES:
             assert os.path.isdir(os.path.join(root, "patches", name)), f"{name} is not under patches/"
             assert not os.path.exists(os.path.join(root, name)), f"{name} is still at the root"
+
+    def test_images_are_not_executable(self):
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        for folder, _, files in os.walk(root):
+            if ".git" in folder or ".venv" in folder or ".worktrees" in folder:
+                continue
+            for f in files:
+                if f.endswith((".jpg", ".png", ".avif")):
+                    assert not os.access(os.path.join(folder, f), os.X_OK), f"{f} is executable"

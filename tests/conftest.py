@@ -57,7 +57,7 @@ def run_tool():
 
 @pytest.fixture
 def run_op():
-    """Run a command through the `op` dispatcher. Returns CompletedProcess."""
+    """Run a command through the `op-img` dispatcher. Returns CompletedProcess."""
     def _run(args: list[str], **kwargs) -> subprocess.CompletedProcess:
         return subprocess.run(
             [sys.executable, OP] + args,
