@@ -88,6 +88,40 @@ def place(src: Path, dest: Path) -> None:
         raise
 
 
+def plus_is_value(args: list[str], i: int) -> bool:
+    """A `+` right after --option (no `=`) is that option's value, unless a patch name follows it."""
+    before = args[i - 1] if i > 0 else ""
+    after = args[i + 1] if i + 1 < len(args) else None
+    return before.startswith("--") and "=" not in before and (after is None or patch_script(after) is None)
+
+
+def split_steps(args: list[str]) -> list[list[str]]:
+    steps, current = [], []
+    for i, arg in enumerate(args):
+        if arg == "+" and not plus_is_value(args, i):
+            steps.append(current)
+            current = []
+        else:
+            current.append(arg)
+    steps.append(current)
+    return steps
+
+
+def stray_argument(opts: list[str]) -> str | None:
+    """The first argument that is neither an option nor the one value after it. Every patch
+    option takes exactly one value (test_conventions checks this), so anything else is a
+    file name the patch would write outside the stack."""
+    wants_value = False
+    for arg in opts:
+        if wants_value:
+            wants_value = False
+        elif arg.startswith("-"):
+            wants_value = arg.startswith("--") and "=" not in arg
+        else:
+            return arg
+    return None
+
+
 def stack(args: list[str]) -> int:
     """op-img <patch> <input> [output] [options] + <patch> [options] + ...
 
@@ -95,14 +129,7 @@ def stack(args: list[str]) -> int:
     patch's own default name, so the suffixes accumulate as they would in a manual
     chain. The final image is moved into place only after every step has succeeded:
     to [output] when one is given, otherwise beside the input."""
-    steps, current = [], []
-    for arg in args:
-        if arg == "+":
-            steps.append(current)
-            current = []
-        else:
-            current.append(arg)
-    steps.append(current)
+    steps = split_steps(args)
 
     for k, step in enumerate(steps, 1):
         if not step:
@@ -118,6 +145,12 @@ def stack(args: list[str]) -> int:
     source, output, first_opts = Path(first[1]), None, first[2:]
     if first_opts and not first_opts[0].startswith("-"):
         output, first_opts = Path(first_opts[0]), first_opts[1:]
+    for k, opts in enumerate([first_opts] + [step[1:] for step in steps[1:]], 1):
+        stray = stray_argument(opts)
+        if stray is not None:
+            print(f"Error: step {k} ({steps[k - 1][0]}) got '{stray}' where an option belongs. "
+                  "Only the first patch takes files: its input, then an optional output.", file=sys.stderr)
+            return 1
     if not source.is_file():
         print(f"Error: file not found: {source}", file=sys.stderr)
         return 1
@@ -181,7 +214,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Error: unknown patch '{args[1]}'", file=sys.stderr)
             return 1
         return run(script, ["--help"])
-    if "+" in args:
+    if len(split_steps(args)) > 1:
         return stack(args)
     script = patch_script(args[0])
     if script is None:

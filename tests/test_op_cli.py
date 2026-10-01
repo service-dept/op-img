@@ -225,6 +225,57 @@ class TestStack:
         assert r.returncode == 0, r.stderr
         assert sorted(p.name for p in tmp_path.iterdir()) == ["input.png", "out.jpg"]
 
+    def test_later_step_cannot_overwrite_the_input(self, run_op, tmp_workdir):
+        tmp_path, img = tmp_workdir
+        before = _pixels(img)
+        r = run_op(["pixel-sort", img, "+", "fold", img])
+        assert r.returncode == 1
+        assert "step 2 (fold) got '" in r.stderr and "where an option belongs" in r.stderr
+        assert np.array_equal(_pixels(img), before)
+        assert [p.name for p in tmp_path.iterdir()] == ["input.png"]
+
+    @pytest.mark.parametrize("later", [
+        ["fold", "stray.png"],
+        ["fold", "--axis", "y", "stray.png"],
+        ["fold", "--axis=y", "stray.png"],
+    ])
+    def test_later_step_positional_writes_nothing(self, run_op, tmp_workdir, later):
+        tmp_path, img = tmp_workdir
+        r = run_op(["pixel-sort", img, "+"] + later, cwd=tmp_path)
+        assert r.returncode == 1
+        assert "got 'stray.png' where an option belongs" in r.stderr
+        assert [p.name for p in tmp_path.iterdir()] == ["input.png"]
+
+    def test_first_step_positional_after_options_writes_nothing(self, run_op, tmp_workdir):
+        tmp_path, img = tmp_workdir
+        r = run_op(["fold", img, "--axis", "y", "stray.png", "+", "channel-swap"], cwd=tmp_path)
+        assert r.returncode == 1
+        assert "step 1 (fold) got 'stray.png' where an option belongs" in r.stderr
+        assert [p.name for p in tmp_path.iterdir()] == ["input.png"]
+
+    def test_plus_as_an_option_value(self, run_op, tmp_workdir):
+        tmp_path, img = tmp_workdir
+        r = run_op(["ascii", img, "--charset", "+"])
+        assert r.returncode == 0, r.stderr
+        assert_valid_image(str(tmp_path / "input-ascii.png"))
+
+    @pytest.mark.parametrize("args, name", [
+        (["ascii", "{img}", "--charset", "+", "+", "channel-swap"], "input-ascii-chswap.png"),
+        (["pixel-sort", "{img}", "+", "ascii", "--charset", "+"], "input-psort-ascii.png"),
+        (["pixel-sort", "{img}", "+", "ascii", "--charset", "+", "--cell", "8"], "input-psort-ascii.png"),
+    ])
+    def test_plus_as_an_option_value_in_a_stack(self, run_op, tmp_workdir, args, name):
+        tmp_path, img = tmp_workdir
+        r = run_op([a.format(img=img) for a in args])
+        assert r.returncode == 0, r.stderr
+        assert_valid_image(str(tmp_path / name))
+
+    def test_plus_before_a_patch_name_starts_a_step(self, run_op, tmp_workdir):
+        tmp_path, img = tmp_workdir
+        r = run_op(["ascii", img, "--charset", "+", "fold"])
+        assert r.returncode != 0
+        assert "step 1 (ascii) failed" in r.stderr
+
 class TestLayout:
     def test_patches_live_under_patches(self):
         root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
