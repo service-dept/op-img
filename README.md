@@ -16,6 +16,12 @@ Install op-img with [pipx](https://pipx.pypa.io/), which also installs Pillow, n
 pipx install op-img
 ```
 
+Or, on macOS or Linux, install it with [Homebrew](https://brew.sh/), which brings its own Python and libraries:
+
+```bash
+brew install service-dept/tap/op-img
+```
+
 Or run it from a clone. Clone the repository:
 
 ```bash
