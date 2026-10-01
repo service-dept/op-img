@@ -5,6 +5,9 @@ options, its edge cases). Adding a patch means adding its default output name
 here and its name to ALL_PATCHES in test_op_cli.py.
 """
 
+import ast
+import os
+
 import pytest
 
 from conftest import assert_valid_image
@@ -102,3 +105,24 @@ def test_no_args_prints_usage(run_tool, name):
     r = run_tool(name, _script(name), [])
     assert r.returncode != 0
     assert "usage" in r.stderr.lower()
+
+
+# A stack tells a later step's options from a stray file name by pairing each
+# --option with the one value after it, so every option must take exactly one.
+NO_SINGLE_VALUE = {"store_true", "store_false", "store_const", "append_const", "count", "help", "version"}
+
+
+@pytest.mark.parametrize("name", _patches())
+def test_every_option_takes_one_value(name):
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    tree = ast.parse(open(os.path.join(root, "patches", name, _script(name))).read())
+    for call in ast.walk(tree):
+        if not (isinstance(call, ast.Call) and getattr(call.func, "attr", None) == "add_argument"):
+            continue
+        flags = [a.value for a in call.args if isinstance(a, ast.Constant)]
+        if not any(str(f).startswith("-") for f in flags):
+            continue
+        keywords = {k.arg: k.value for k in call.keywords}
+        action = keywords.get("action")
+        assert not (isinstance(action, ast.Constant) and action.value in NO_SINGLE_VALUE), f"{flags} takes no value"
+        assert "nargs" not in keywords, f"{flags} sets nargs"

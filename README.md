@@ -621,7 +621,9 @@ op-img pixel-sort photo.jpg --by hue + channel-swap   # options follow the patch
 op-img seam-carve photo.jpg out.jpg + thermal         # an output after the input names the final file
 ```
 
-The input, and the output if you give one, come right after the first patch. Subsequent patches only take arguments. Omit the output path to save the result in the same directory as the input, with each patch's suffix applied in order.
+The input, and the output if you give one, come right after the first patch. Subsequent patches only take options. Omit the output path to save the result in the same directory as the input, with each patch's suffix applied in order.
+
+To pass `+` itself as an option's value right before the next patch, join them with `=`, as in `--charset=+`.
 
 ### contour + swirl
 
