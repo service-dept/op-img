@@ -66,7 +66,7 @@ Every command names a patch, then the input image, then an optional output, then
 op-img <patch> <input> [output] [--args]
 ```
 
-Without an output, op-img saves the result next to the input, with the patch's suffix added to the name.
+Without an output, op-img saves the result next to the input, with the patch's suffix added to the name. Patches that draw on a transparent background save a PNG.
 
 Show the usage and three patches at random:
 
@@ -185,6 +185,8 @@ Randomly shift horizontal slices of the image for a broken-signal effect.
 ```bash
 op-img scan-glitch <input> [output] [--severity N] [--seed N]
 ```
+
+Default: `--severity 8`
 
 ![scan-glitch example](patches/scan-glitch/example.jpg)
 
@@ -485,6 +487,8 @@ op-img closest-palette <input> [output] --palette "#hex,#hex,..."
 op-img closest-palette <input> [output] --from-image ref.png --colors N
 ```
 
+Default: `--colors 6` with `--from-image`
+
 ![closest-palette example](patches/closest-palette/example.jpg)
 
 ### invert-lightness
@@ -557,41 +561,49 @@ Default: `--colors "#1e3a8a,#facc15" --amount 1 --clusters 6`
 
 ### dot-halftone
 
-Convert to a halftone dot grid where dot size varies with brightness. Pink dots on transparent background.
+Convert to a halftone dot grid where dot size varies with brightness. Pink dots on a transparent background, saved as a PNG.
 
 ```bash
 op-img dot-halftone <input> [output] [--spacing N] [--min-dot N] [--max-dot N] [--angle N]
 ```
 
+Default: `--spacing 8 --min-dot 0 --angle 0`, with `--max-dot` at half the spacing
+
 ![dot-halftone example](patches/dot-halftone/example.jpg)
 
 ### line-halftone
 
-Variable-width lines whose thickness maps to brightness. Pink lines on transparent background.
+Variable-width lines whose thickness maps to brightness. Pink lines on a transparent background, saved as a PNG.
 
 ```bash
 op-img line-halftone <input> [output] [--spacing N] [--min-width N] [--max-width N] [--angle N]
 ```
 
+Default: `--spacing 14 --min-width 0 --angle 0`, with `--max-width` equal to the spacing
+
 ![line-halftone example](patches/line-halftone/example.jpg)
 
 ### cross-hatch
 
-Multiple line-halftone passes at different angles, each gated by a brightness threshold. Darker areas get more layers of hatching. Pink lines on transparent background.
+Multiple line-halftone passes at different angles, each gated by a brightness threshold. Darker areas get more layers of hatching. Pink lines on a transparent background, saved as a PNG.
 
 ```bash
 op-img cross-hatch <input> [output] [--layers N] [--spacing N] [--thresholds N,N,N]
 ```
 
+Default: `--layers 3 --spacing 12`, with thresholds evenly spaced from 200 down to 50
+
 ![cross-hatch example](patches/cross-hatch/example.jpg)
 
 ### stipple
 
-Random dot placement where density maps to brightness. Pink dots on transparent background.
+Random dot placement where density maps to brightness. Pink dots on a transparent background, saved as a PNG.
 
 ```bash
 op-img stipple <input> [output] [--dots N] [--dot-size N] [--seed N]
 ```
+
+Default: `--dots 50000 --dot-size 1`
 
 ![stipple example](patches/stipple/example.jpg)
 
