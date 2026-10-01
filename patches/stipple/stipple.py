@@ -15,11 +15,22 @@ from PIL import Image, ImageDraw
 def parse_args():
     p = argparse.ArgumentParser(description="Generate a stipple pattern from an image.")
     p.add_argument("input", help="Source image path")
-    p.add_argument("output", nargs="?", default=None, help="Output PNG path (default: <input>-stipple.png)")
+    p.add_argument("output", nargs="?", default=None, help="Output image path (default: <input>-stipple.png); formats without transparency, such as JPEG, get a white background")
     p.add_argument("--dots", type=int, default=50000, help="Total dot count (default: 50000)")
     p.add_argument("--dot-size", type=float, default=1, help="Dot radius in pixels (default: 1)")
     p.add_argument("--seed", type=int, default=None, help="Random seed for reproducibility")
     return p.parse_args()
+
+
+def save(out: Image.Image, path: str) -> None:
+    """Save in the format the path names, PNG when it names none. Formats without
+    transparency, such as JPEG, get a white background."""
+    ext = os.path.splitext(path)[1].lower()
+    if ext in (".jpg", ".jpeg", ".bmp"):
+        flat = Image.new("RGB", out.size, (255, 255, 255))
+        flat.paste(out, mask=out.getchannel("A"))
+        out = flat
+    out.save(path, Image.registered_extensions().get(ext, "PNG"))
 
 
 def main():
@@ -45,7 +56,7 @@ def main():
     if total == 0:
         # Completely white image, nothing to draw
         out = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-        out.save(args.output, "PNG")
+        save(out, args.output)
         print(f"stipple: {os.path.basename(args.input)} -> {os.path.basename(args.output)} "
               f"(0 dots, image is blank)", file=sys.stderr)
         return
@@ -68,7 +79,7 @@ def main():
     for x, y in zip(xs, ys):
         draw.ellipse([x - r, y - r, x + r, y + r], fill=(236, 72, 153, 255))
 
-    out.save(args.output, "PNG")
+    save(out, args.output)
     print(f"stipple: {os.path.basename(args.input)} -> {os.path.basename(args.output)} "
           f"(dots={args.dots}, dot-size={args.dot_size})", file=sys.stderr)
 

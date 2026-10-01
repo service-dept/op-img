@@ -16,7 +16,7 @@ from PIL import Image, ImageDraw, ImageFilter
 def parse_args():
     p = argparse.ArgumentParser(description="Generate a cross-hatch pattern from an image.")
     p.add_argument("input", help="Source image path")
-    p.add_argument("output", nargs="?", default=None, help="Output PNG path (default: <input>-hatch.png)")
+    p.add_argument("output", nargs="?", default=None, help="Output image path (default: <input>-hatch.png); formats without transparency, such as JPEG, get a white background")
     p.add_argument("--layers", type=int, default=3, help="Number of hatch angle passes (default: 3)")
     p.add_argument("--spacing", type=int, default=12, help="Pixels between lines (default: 12)")
     p.add_argument("--thresholds", type=str, default=None,
@@ -61,6 +61,17 @@ def draw_hatch_layer(draw, img, w, h, angle_deg, spacing, threshold):
                 draw.line([(px, py), (nx, ny)], fill=(236, 72, 153, 255), width=1)
 
 
+def save(out: Image.Image, path: str) -> None:
+    """Save in the format the path names, PNG when it names none. Formats without
+    transparency, such as JPEG, get a white background."""
+    ext = os.path.splitext(path)[1].lower()
+    if ext in (".jpg", ".jpeg", ".bmp"):
+        flat = Image.new("RGB", out.size, (255, 255, 255))
+        flat.paste(out, mask=out.getchannel("A"))
+        out = flat
+    out.save(path, Image.registered_extensions().get(ext, "PNG"))
+
+
 def main():
     args = parse_args()
 
@@ -99,7 +110,7 @@ def main():
     for angle, threshold in zip(angles, thresholds):
         draw_hatch_layer(draw, img, w, h, angle, args.spacing, threshold)
 
-    out.save(args.output, "PNG")
+    save(out, args.output)
     print(f"cross-hatch: {os.path.basename(args.input)} -> {os.path.basename(args.output)} "
           f"(layers={args.layers}, spacing={args.spacing})", file=sys.stderr)
 

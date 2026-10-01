@@ -15,12 +15,23 @@ from PIL import Image, ImageDraw, ImageFilter
 def parse_args():
     p = argparse.ArgumentParser(description="Generate a halftone dot pattern from an image.")
     p.add_argument("input", help="Source image path")
-    p.add_argument("output", nargs="?", default=None, help="Output PNG path (default: <input>-halftone.png)")
+    p.add_argument("output", nargs="?", default=None, help="Output image path (default: <input>-halftone.png); formats without transparency, such as JPEG, get a white background")
     p.add_argument("--spacing", type=int, default=8, help="Pixels between dot centers (default: 8)")
     p.add_argument("--min-dot", type=float, default=0, help="Minimum dot radius (default: 0)")
     p.add_argument("--max-dot", type=float, default=None, help="Maximum dot radius (default: spacing/2)")
     p.add_argument("--angle", type=float, default=0, help="Grid rotation in degrees (default: 0)")
     return p.parse_args()
+
+
+def save(out: Image.Image, path: str) -> None:
+    """Save in the format the path names, PNG when it names none. Formats without
+    transparency, such as JPEG, get a white background."""
+    ext = os.path.splitext(path)[1].lower()
+    if ext in (".jpg", ".jpeg", ".bmp"):
+        flat = Image.new("RGB", out.size, (255, 255, 255))
+        flat.paste(out, mask=out.getchannel("A"))
+        out = flat
+    out.save(path, Image.registered_extensions().get(ext, "PNG"))
 
 
 def main():
@@ -83,7 +94,7 @@ def main():
                 fill=(236, 72, 153, 255),
             )
 
-    out.save(args.output, "PNG")
+    save(out, args.output)
     print(f"dot-halftone: {os.path.basename(args.input)} -> {os.path.basename(args.output)} "
           f"(spacing={args.spacing}, angle={args.angle})", file=sys.stderr)
 

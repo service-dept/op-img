@@ -15,12 +15,23 @@ from PIL import Image, ImageDraw, ImageFilter
 def parse_args():
     p = argparse.ArgumentParser(description="Generate a halftone line pattern from an image.")
     p.add_argument("input", help="Source image path")
-    p.add_argument("output", nargs="?", default=None, help="Output PNG path (default: <input>-lines.png)")
+    p.add_argument("output", nargs="?", default=None, help="Output image path (default: <input>-lines.png); formats without transparency, such as JPEG, get a white background")
     p.add_argument("--spacing", type=int, default=14, help="Pixels between line centers (default: 14)")
     p.add_argument("--min-width", type=float, default=0, help="Minimum line width (default: 0)")
     p.add_argument("--max-width", type=float, default=None, help="Maximum line width (default: spacing)")
     p.add_argument("--angle", type=float, default=0, help="Line angle in degrees, 0=horizontal 90=vertical (default: 0)")
     return p.parse_args()
+
+
+def save(out: Image.Image, path: str) -> None:
+    """Save in the format the path names, PNG when it names none. Formats without
+    transparency, such as JPEG, get a white background."""
+    ext = os.path.splitext(path)[1].lower()
+    if ext in (".jpg", ".jpeg", ".bmp"):
+        flat = Image.new("RGB", out.size, (255, 255, 255))
+        flat.paste(out, mask=out.getchannel("A"))
+        out = flat
+    out.save(path, Image.registered_extensions().get(ext, "PNG"))
 
 
 def main():
@@ -93,7 +104,7 @@ def main():
 
             draw.line([(px, py), (nx, ny)], fill=(236, 72, 153, 255), width=max(1, int(round(line_w))))
 
-    out.save(args.output, "PNG")
+    save(out, args.output)
     print(f"line-halftone: {os.path.basename(args.input)} -> {os.path.basename(args.output)} "
           f"(spacing={args.spacing}, angle={args.angle})", file=sys.stderr)
 
