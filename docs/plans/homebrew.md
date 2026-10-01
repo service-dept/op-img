@@ -7,11 +7,12 @@ and runs the formula test on each platform.
 
 ## Packaging
 
-- Use a tap, not homebrew-core. The intended public destination is
-  `service-dept/homebrew-tap`, with the formula at `Formula/op-img.rb`.
-- Keep a source copy here so changes can be reviewed and tested before the tap
-  is published. The tap is a separate publication step; adding this file alone
-  does **not** make `brew install service-dept/tap/op-img` available.
+- Use a tap, not homebrew-core. The public tap is
+  [`service-dept/homebrew-tap`](https://github.com/service-dept/homebrew-tap),
+  with the formula at `Formula/op-img.rb`.
+- Keep a source copy here so changes can be reviewed and tested before they
+  reach the tap. Changing this file alone does **not** change what
+  `brew install service-dept/tap/op-img` installs.
 - Use Homebrew's `Language::Python::Virtualenv` with `python@3.14`, `numpy`,
   `scipy`, and `pillow`. The Python version must match the bindings shipped by
   those formulae. The original Python 3.12 proposal does not match their current
@@ -59,18 +60,13 @@ re-enable it from the Actions tab if the Monday runs stop. It installs the
 workflow covers the checkout. The local tap has no git history, so `brew audit`
 skips its version and checksum history checks there.
 
-## Publish the tap
+## The tap
 
-After the Homebrew checks pass on both platforms:
-
-1. Create `service-dept/homebrew-tap` and copy `Formula/op-img.rb` into it.
-2. Make that tap public, then verify a fresh install with
-   `brew install service-dept/tap/op-img` and `brew test op-img`.
-3. Add Homebrew as an installation option in the README only after that command
-   works. Keep the existing pipx-first quick start until then.
-
-These repository and publication steps are manual and happen only after the
-platform checks pass.
+`service-dept/homebrew-tap` is public and holds a copy of `Formula/op-img.rb`.
+Its `Tests` workflow runs the same style, install, audit and test checks against
+the tap itself on macOS and Linux, on every PR, on `main`, and every Monday.
+There the audit also checks the version and checksum history. The README lists
+Homebrew as an install option after pipx.
 
 ## Release flow
 
@@ -79,10 +75,7 @@ platform checks pass.
    formula here, and run the Homebrew workflow. Do not point it at a moving branch.
 3. Update the tap's formula to the same tested URL and checksum, for example with
    `brew bump-formula-pr --url … service-dept/tap/op-img`.
-4. Run `brew install --build-from-source service-dept/tap/op-img` (or `reinstall`)
-   and `brew test op-img` on macOS and Linux.
-5. Run `brew audit --strict service-dept/tap/op-img`. In the real tap it also
-   checks the version and checksum history.
+4. Merge the tap PR once its `Tests` workflow passes on macOS and Linux.
 
 When Homebrew changes Python bindings, update the formula's Python dependency and
 increment its `revision` if the op-img release is unchanged. Re-run the platform
