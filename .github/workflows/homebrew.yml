@@ -1,0 +1,49 @@
+name: Homebrew
+
+on:
+  pull_request:
+    paths:
+      - Formula/op-img.rb
+      - .github/workflows/homebrew.yml
+  push:
+    branches: [main]
+    paths:
+      - Formula/op-img.rb
+      - .github/workflows/homebrew.yml
+  # Homebrew's Python, numpy, scipy and pillow move without any change here.
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Install and test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    env:
+      HOMEBREW_NO_ANALYTICS: "1"
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: Homebrew/actions/setup-homebrew@e99025eb970cfa124b8284a35463d87426917478 # 2026.09.28.1
+      - name: Stage the formula in a local test tap
+        run: |
+          brew tap-new --no-git service-dept/op-img-ci
+          cp Formula/op-img.rb "$(brew --repository service-dept/op-img-ci)/Formula/op-img.rb"
+      - name: Check formula style
+        run: brew style service-dept/op-img-ci/op-img
+      - name: Install the released PyPI sdist
+        run: brew install --build-from-source service-dept/op-img-ci/op-img
+      - name: Check formula metadata and installed dependencies
+        run: brew audit --strict service-dept/op-img-ci/op-img
+      - name: Test the installed command and image processing
+        run: brew test service-dept/op-img-ci/op-img
