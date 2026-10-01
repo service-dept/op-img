@@ -561,7 +561,7 @@ Default: `--colors "#1e3a8a,#facc15" --amount 1 --clusters 6`
 
 ### dot-halftone
 
-Convert to a halftone dot grid where dot size varies with brightness. Pink dots on a transparent background, saved as a PNG.
+Convert to a halftone dot grid where dot size varies with brightness. Pink dots on a transparent background, saved as a PNG. A JPEG output gets a white background.
 
 ```bash
 op-img dot-halftone <input> [output] [--spacing N] [--min-dot N] [--max-dot N] [--angle N]
@@ -573,7 +573,7 @@ Default: `--spacing 8 --min-dot 0 --angle 0`, with `--max-dot` at half the spaci
 
 ### line-halftone
 
-Variable-width lines whose thickness maps to brightness. Pink lines on a transparent background, saved as a PNG.
+Variable-width lines whose thickness maps to brightness. Pink lines on a transparent background, saved as a PNG. A JPEG output gets a white background.
 
 ```bash
 op-img line-halftone <input> [output] [--spacing N] [--min-width N] [--max-width N] [--angle N]
@@ -585,7 +585,7 @@ Default: `--spacing 14 --min-width 0 --angle 0`, with `--max-width` equal to the
 
 ### cross-hatch
 
-Multiple line-halftone passes at different angles, each gated by a brightness threshold. Darker areas get more layers of hatching. Pink lines on a transparent background, saved as a PNG.
+Multiple line-halftone passes at different angles, each gated by a brightness threshold. Darker areas get more layers of hatching. Pink lines on a transparent background, saved as a PNG. A JPEG output gets a white background.
 
 ```bash
 op-img cross-hatch <input> [output] [--layers N] [--spacing N] [--thresholds N,N,N]
@@ -597,7 +597,7 @@ Default: `--layers 3 --spacing 12`, with thresholds evenly spaced from 200 down 
 
 ### stipple
 
-Random dot placement where density maps to brightness. Pink dots on a transparent background, saved as a PNG.
+Random dot placement where density maps to brightness. Pink dots on a transparent background, saved as a PNG. A JPEG output gets a white background.
 
 ```bash
 op-img stipple <input> [output] [--dots N] [--dot-size N] [--seed N]
